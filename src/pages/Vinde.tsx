@@ -28,6 +28,7 @@ const Vinde = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Force HMR refresh to clear any cached references
     toast.success('Solicitarea de evaluare a fost trimisă! Te vom contacta în cel mai scurt timp pentru a programa o vizualizare.');
     console.log('Sell form submitted:', formData);
   };
