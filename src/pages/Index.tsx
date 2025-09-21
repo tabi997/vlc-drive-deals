@@ -225,7 +225,7 @@ const Index = () => {
                 Explorează Mașinile <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
+            <Button asChild variant="outline" size="lg" className="border-2 border-white text-white bg-white/10 backdrop-blur-sm hover:bg-white hover:text-primary">
               <Link to="/masini-la-comanda">
                 Comandă Personalizat
               </Link>
