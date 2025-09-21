@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Car, Award, Users, Shield, ArrowRight, Star } from 'lucide-react';
 import Header from '@/components/Header';
+import FeaturedCarsCarousel from '@/components/FeaturedCarsCarousel';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import heroImage from '@/assets/hero-cars.jpg';
@@ -106,6 +107,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Featured Cars Carousel */}
+      <FeaturedCarsCarousel />
 
       {/* Services Section */}
       <section className="py-20">

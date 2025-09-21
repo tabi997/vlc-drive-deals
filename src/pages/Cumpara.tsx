@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Car, Fuel, Calendar, Settings, Heart, Eye } from 'lucide-react';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
@@ -145,11 +146,13 @@ const Cumpara = () => {
           {filteredCars.map((car) => (
             <Card key={car.id} className="overflow-hidden hover:shadow-card-custom transition-smooth group">
               <div className="relative">
-                <img 
-                  src={car.image} 
-                  alt={`${car.make} ${car.model}`}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-smooth"
-                />
+                <Link to={`/car/${car.id}`}>
+                  <img 
+                    src={car.image} 
+                    alt={`${car.make} ${car.model}`}
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-smooth cursor-pointer"
+                  />
+                </Link>
                 <div className="absolute top-4 right-4 flex gap-2">
                   <Button
                     size="sm"
@@ -164,9 +167,12 @@ const Cumpara = () => {
                   <Button
                     size="sm"
                     variant="secondary"
+                    asChild
                     className="p-2 bg-card/80 backdrop-blur-sm hover:bg-accent hover:text-accent-foreground"
                   >
-                    <Eye className="h-4 w-4" />
+                    <Link to={`/car/${car.id}`}>
+                      <Eye className="h-4 w-4" />
+                    </Link>
                   </Button>
                 </div>
                 <Badge className="absolute top-4 left-4 bg-accent text-accent-foreground">
@@ -210,8 +216,10 @@ const Cumpara = () => {
                   <Button className="flex-1" variant="default">
                     Contactează
                   </Button>
-                  <Button variant="outline" className="flex-1">
-                    Detalii
+                  <Button variant="outline" className="flex-1" asChild>
+                    <Link to={`/car/${car.id}`}>
+                      Detalii
+                    </Link>
                   </Button>
                 </div>
               </CardContent>
