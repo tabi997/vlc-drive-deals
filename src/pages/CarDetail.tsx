@@ -1,122 +1,144 @@
-import { useParams, Link } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Heart, 
-  Share2, 
-  Calendar, 
-  Fuel, 
-  Settings, 
-  Gauge, 
-  Palette, 
-  Shield, 
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import {
+  ArrowLeft,
+  Heart,
+  Share2,
+  Calendar,
+  Fuel,
+  Settings,
+  Gauge,
+  Palette,
   CheckCircle,
+  MapPin,
   Phone,
+  MessageCircle,
   Mail,
-  MessageCircle
 } from 'lucide-react';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useListing } from '@/hooks/useListing';
+import type { ListingDetail, ListingFeatureGroup } from '@/types/listing';
 
-// Extended mock car data
-const mockCarDetails = {
-  1: {
-    id: 1,
-    make: 'BMW',
-    model: 'Seria 3',
-    year: 2019,
-    price: 28500,
-    mileage: 95000,
-    fuel: 'Diesel',
-    transmission: 'Automată',
-    color: 'Negru',
-    engine: '2.0L Diesel',
-    power: '190 CP',
-    doors: 4,
-    seats: 5,
-    category: 'Sedan',
-    vin: 'WBAPB9C50AD123456',
-    firstRegistration: '15.03.2019',
-    lastService: '12.01.2024',
-    nextTechnicalInspection: '15.03.2025',
-    images: [
-      'https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1556189250-72ba954cfc2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1542362567-b07e54358ab4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
-    ],
-    features: [
-      'Climatizare automată',
-      'Navigație GPS',
-      'Scaune din piele',
-      'Sistem audio premium',
-      'Senzori parcare',
-      'Camera marsarier',
-      'Cruise control',
-      'Xenon'
-    ],
-    description: 'BMW Seria 3 în stare excelentă, revizii la zi, fără accidente. Vehiculul a fost întreținut meticulos și prezintă un istoric complet de service. Perfectă pentru cei care caută un sedan premium cu performanțe excepționale.',
-    warranty: '12 luni garanție',
-    financing: true,
-    exchange: true
-  },
-  2: {
-    id: 2,
-    make: 'Audi',
-    model: 'A4',
-    year: 2020,
-    price: 32000,
-    mileage: 67000,
-    fuel: 'Benzină',
-    transmission: 'Manuală',
-    color: 'Alb',
-    engine: '2.0L TFSI',
-    power: '190 CP',
-    doors: 4,
-    seats: 5,
-    category: 'Sedan',
-    vin: 'WAUZZZ8K5DA123456',
-    firstRegistration: '10.07.2020',
-    lastService: '20.02.2024',
-    nextTechnicalInspection: '10.07.2025',
-    images: [
-      'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
-    ],
-    features: [
-      'Virtual Cockpit',
-      'MMI Navigation',
-      'Scaune sportive',
-      'LED Matrix',
-      'Asistent parcare',
-      'Quattro AWD',
-      'Sport diferențial'
-    ],
-    description: 'Audi A4 cu echipare completă, în stare impecabilă. Vehiculul beneficiază de toate opțiunile premium și a fost condus responsabil.',
-    warranty: '12 luni garanție',
-    financing: true,
-    exchange: true
+const priceFormatter = new Intl.NumberFormat('ro-RO', {
+  style: 'currency',
+  currency: 'EUR',
+  maximumFractionDigits: 0,
+});
+
+const numberFormatter = new Intl.NumberFormat('ro-RO');
+
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1549921296-3c48d285d0c5?auto=format&fit=crop&w=1200&q=80';
+
+const DETAIL_GROUP_LABELS: Record<string, string> = {
+  basic_information: 'Informații de bază',
+  technical_specs: 'Specificații tehnice',
+  comfort_and_addons: 'Confort și echipamente',
+  electronics_and_driver_assistance: 'Electronice și sisteme de asistență',
+  security: 'Siguranță',
+  history: 'Istoric',
+  documents: 'Documente',
+};
+
+const groupDetails = (details?: ListingDetail[]) => {
+  if (!details) return [] as { key: string; label: string; items: ListingDetail[] }[];
+  const map = new Map<string, { key: string; label: string; items: ListingDetail[] }>();
+  details.forEach((detail) => {
+    const key = detail.group ?? 'other';
+    if (!map.has(key)) {
+      map.set(key, {
+        key,
+        label: DETAIL_GROUP_LABELS[key] ?? detail.group?.replace('_', ' ').toUpperCase() ?? 'Detalii',
+        items: [],
+      });
+    }
+    map.get(key)?.items.push(detail);
+  });
+  return Array.from(map.values()).map((group) => ({
+    ...group,
+    items: group.items.sort((a, b) => (a.order ?? 99) - (b.order ?? 99)),
+  }));
+};
+
+const formatMileage = (value?: number | null) => {
+  if (value == null) return null;
+  return `${numberFormatter.format(value)} km`;
+};
+
+const formatEngine = (cc?: number | null, hp?: number | null) => {
+  if (cc == null && hp == null) return null;
+  const parts = [];
+  if (cc != null) parts.push(`${numberFormatter.format(cc)} cm³`);
+  if (hp != null) parts.push(`${hp} CP`);
+  return parts.join(' • ');
+};
+
+const getBadgeVariant = (code: string) => {
+  switch (code) {
+    case 'dealer':
+      return 'secondary';
+    case 'fast-reply':
+      return 'outline';
+    default:
+      return 'default';
   }
-  // Add more cars as needed
+};
+
+const featureGroupsToTabs = (groups?: ListingFeatureGroup[]) => {
+  if (!groups?.length) return null;
+  return groups.map((group) => ({
+    key: group.key,
+    label: group.label,
+    items: group.items,
+  }));
 };
 
 const CarDetail = () => {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const { data: listing, isLoading } = useListing({ id });
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
-  
-  const carId = Number(id);
-  const car = mockCarDetails[carId as keyof typeof mockCarDetails];
 
-  if (!car) {
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [listing?.id]);
+
+  useEffect(() => {
+    if (searchParams.get('action') === 'contact') {
+      document.getElementById('contact-card')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [searchParams]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            <Card className="lg:col-span-2 animate-pulse">
+              <div className="h-96 w-full bg-muted" />
+            </Card>
+            <Card className="animate-pulse">
+              <div className="h-64 bg-muted" />
+            </Card>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!listing) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container mx-auto px-4 py-16 text-center">
-          <h1 className="text-3xl font-bold text-foreground mb-4">Mașina nu a fost găsită</h1>
-          <p className="text-muted-foreground mb-8">Anunțul pe care îl căutați nu există sau a fost șters.</p>
+          <h1 className="mb-4 text-3xl font-bold text-foreground">Mașina nu a fost găsită</h1>
+          <p className="mb-8 text-muted-foreground">Anunțul pe care îl căutați nu există sau a fost șters.</p>
           <Button asChild>
             <Link to="/cumpara">
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -128,21 +150,64 @@ const CarDetail = () => {
     );
   }
 
+  const images = listing.images?.length ? listing.images : [{ url: FALLBACK_IMAGE, isPrimary: true }];
+  const groupedDetails = groupDetails(listing.details);
+  const featureTabs = featureGroupsToTabs(listing.featureGroups);
+  const price = priceFormatter.format(listing.price.value);
+
+  const quickStats = [
+    {
+      icon: Calendar,
+      label: 'An fabricație',
+      value: listing.registrationYear ?? '—',
+    },
+    {
+      icon: Gauge,
+      label: 'Kilometraj',
+      value: formatMileage(listing.mileageKm) ?? '—',
+    },
+    {
+      icon: Fuel,
+      label: 'Combustibil',
+      value: listing.fuelType ?? '—',
+    },
+    {
+      icon: Settings,
+      label: 'Cutie viteze',
+      value: listing.gearbox ?? '—',
+    },
+    {
+      icon: Gauge,
+      label: 'Motor',
+      value: formatEngine(listing.engineCapacityCc, listing.enginePowerHp) ?? '—',
+    },
+    {
+      icon: Palette,
+      label: 'Culoare',
+      value: listing.color ?? '—',
+    },
+  ];
+
+  const basicInfoGroup = groupedDetails.find((group) => group.key === 'basic_information');
+  const technicalGroup = groupedDetails.find((group) => group.key === 'technical_specs');
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="container mx-auto px-4 py-8">
-        {/* Breadcrumb Navigation */}
-        <div className="flex items-center gap-2 text-muted-foreground mb-6">
-          <Link to="/" className="hover:text-foreground transition-colors">Acasă</Link>
+        <div className="mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          <Link to="/" className="transition-colors hover:text-foreground">Acasă</Link>
           <span>/</span>
-          <Link to="/cumpara" className="hover:text-foreground transition-colors">Cumpără</Link>
-          <span>/</span>
-          <span className="text-foreground">{car.make} {car.model}</span>
+          <Link to="/cumpara" className="transition-colors hover:text-foreground">Cumpără</Link>
+          {basicInfoGroup?.items?.find((item) => item.key === 'make') && (
+            <>
+              <span>/</span>
+              <span className="text-foreground">{listing.title}</span>
+            </>
+          )}
         </div>
 
-        {/* Back Button */}
         <Button variant="outline" asChild className="mb-6">
           <Link to="/cumpara">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -150,55 +215,47 @@ const CarDetail = () => {
           </Link>
         </Button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Image Gallery */}
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="lg:col-span-2 space-y-6">
             <Card className="overflow-hidden">
               <div className="relative">
-                <img 
-                  src={car.images[currentImageIndex]} 
-                  alt={`${car.make} ${car.model}`}
-                  className="w-full h-96 object-cover"
+                <img
+                  src={images[currentImageIndex]?.url ?? FALLBACK_IMAGE}
+                  alt={listing.title}
+                  className="h-96 w-full object-cover"
                 />
-                <div className="absolute top-4 right-4 flex gap-2">
+                <div className="absolute right-4 top-4 flex gap-2">
                   <Button
                     size="sm"
                     variant="secondary"
-                    onClick={() => setIsFavorite(!isFavorite)}
+                    onClick={() => setIsFavorite((prev) => !prev)}
                     className="bg-card/80 backdrop-blur-sm"
                   >
                     <Heart className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="bg-card/80 backdrop-blur-sm"
-                  >
+                  <Button size="sm" variant="secondary" className="bg-card/80 backdrop-blur-sm">
                     <Share2 className="h-4 w-4" />
                   </Button>
                 </div>
-                <Badge className="absolute top-4 left-4 bg-accent text-accent-foreground">
-                  {car.year}
-                </Badge>
+                {listing.registrationYear && (
+                  <Badge className="absolute left-4 top-4 bg-accent text-accent-foreground">
+                    {listing.registrationYear}
+                  </Badge>
+                )}
               </div>
-              
-              {/* Thumbnail Gallery */}
-              {car.images.length > 1 && (
+              {images.length > 1 && (
                 <div className="p-4">
                   <div className="flex gap-2 overflow-x-auto">
-                    {car.images.map((image, index) => (
+                    {images.map((image, index) => (
                       <button
-                        key={index}
+                        key={image.url}
+                        type="button"
                         onClick={() => setCurrentImageIndex(index)}
-                        className={`flex-shrink-0 rounded-lg overflow-hidden border-2 transition-smooth ${
+                        className={`flex-shrink-0 overflow-hidden rounded-lg border-2 transition-smooth ${
                           currentImageIndex === index ? 'border-accent' : 'border-transparent'
                         }`}
                       >
-                        <img 
-                          src={image} 
-                          alt={`${car.make} ${car.model} ${index + 1}`}
-                          className="w-20 h-16 object-cover"
-                        />
+                        <img src={image.url} alt={`${listing.title} ${index + 1}`} className="h-16 w-20 object-cover" />
                       </button>
                     ))}
                   </div>
@@ -206,163 +263,305 @@ const CarDetail = () => {
               )}
             </Card>
 
-            {/* Car Details */}
-            <Card className="mt-6">
+            <Card>
               <CardHeader>
-                <CardTitle className="text-2xl">Detalii Tehnice</CardTitle>
+                <CardTitle className="text-2xl">Prezentare generală</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                  <div className="flex items-center gap-3">
-                    <Gauge className="h-5 w-5 text-accent" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Motor</p>
-                      <p className="font-medium">{car.engine}</p>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  {quickStats.map((stat) => (
+                    <div key={stat.label} className="rounded-xl border border-border p-4">
+                      <stat.icon className="mb-2 h-5 w-5 text-accent" />
+                      <p className="text-sm text-muted-foreground">{stat.label}</p>
+                      <p className="text-base font-semibold text-foreground">{stat.value}</p>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Settings className="h-5 w-5 text-accent" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Putere</p>
-                      <p className="font-medium">{car.power}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Calendar className="h-5 w-5 text-accent" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Kilometraj</p>
-                      <p className="font-medium">{car.mileage.toLocaleString()} km</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Fuel className="h-5 w-5 text-accent" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Combustibil</p>
-                      <p className="font-medium">{car.fuel}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Settings className="h-5 w-5 text-accent" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Transmisie</p>
-                      <p className="font-medium">{car.transmission}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Palette className="h-5 w-5 text-accent" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Culoare</p>
-                      <p className="font-medium">{car.color}</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <Separator className="my-6" />
-                
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Descriere</h3>
-                  <p className="text-muted-foreground leading-relaxed">{car.description}</p>
+                  ))}
                 </div>
 
-                <Separator className="my-6" />
+                {listing.mainFeatures?.length ? (
+                  <div className="rounded-xl bg-muted/40 p-4">
+                    <h3 className="mb-3 text-lg font-semibold text-foreground">Caracteristici cheie</h3>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {listing.mainFeatures.map((feature) => (
+                        <div key={feature.label} className="flex items-center gap-2 text-sm">
+                          <CheckCircle className="h-4 w-4 text-accent" />
+                          <span className="font-medium text-foreground">{feature.label}:</span>
+                          <span className="text-muted-foreground">{feature.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
 
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Dotări</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {car.features.map((feature, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-accent" />
-                        <span className="text-sm">{feature}</span>
+                {listing.description && (
+                  <div>
+                    <h3 className="mb-3 text-lg font-semibold text-foreground">Descriere</h3>
+                    <p className="whitespace-pre-line text-muted-foreground leading-relaxed">{listing.description}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {featureTabs?.length ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Dotări și opțiuni</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Tabs defaultValue={featureTabs[0]?.key ?? '0'} className="w-full">
+                    <TabsList className="flex flex-wrap justify-start gap-2 bg-muted/40 p-1">
+                      {featureTabs.map((tab) => (
+                        <TabsTrigger key={tab.key} value={tab.key} className="whitespace-nowrap">
+                          {tab.label}
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                    {featureTabs.map((tab) => (
+                      <TabsContent key={tab.key} value={tab.key} className="mt-4">
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          {tab.items.map((item) => (
+                            <div key={item} className="flex items-center gap-2 text-sm">
+                              <CheckCircle className="h-4 w-4 text-accent" />
+                              <span>{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </TabsContent>
+                    ))}
+                  </Tabs>
+                </CardContent>
+              </Card>
+            ) : null}
+
+            {technicalGroup?.items?.length ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Specificații tehnice detaliate</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {technicalGroup.items.map((detail) => (
+                      <div key={detail.key} className="rounded-lg border border-border p-4">
+                        <p className="text-sm text-muted-foreground">{detail.label}</p>
+                        <p className="text-base font-semibold text-foreground">{detail.value ?? '—'}</p>
                       </div>
                     ))}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            ) : null}
+
+            {groupedDetails.filter((group) => group.key !== 'technical_specs' && group.key !== 'basic_information').length ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Detalii suplimentare</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {groupedDetails
+                    .filter((group) => group.key !== 'technical_specs' && group.key !== 'basic_information')
+                    .map((group) => (
+                      <div key={group.key}>
+                        <h3 className="text-lg font-semibold text-foreground">{group.label}</h3>
+                        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                          {group.items.map((item) => (
+                            <div key={item.key} className="rounded-lg border border-border p-4 text-sm">
+                              <p className="text-muted-foreground">{item.label}</p>
+                              <p className="font-medium text-foreground">{item.value ?? '—'}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                </CardContent>
+              </Card>
+            ) : null}
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-6">
-            {/* Price and Basic Info */}
             <Card>
               <CardHeader>
-                <div className="flex justify-between items-start">
+                <div className="flex items-start justify-between gap-4">
                   <div>
-                    <CardTitle className="text-3xl">{car.make} {car.model}</CardTitle>
-                    <p className="text-muted-foreground">{car.year} • {car.color}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-4xl font-bold text-accent">€{car.price.toLocaleString()}</p>
-                  <p className="text-sm text-muted-foreground">TVA inclus</p>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {car.warranty && (
-                    <div className="flex items-center gap-2 text-accent">
-                      <Shield className="h-4 w-4" />
-                      <span className="text-sm font-medium">{car.warranty}</span>
-                    </div>
-                  )}
-                  
-                  <div className="flex gap-2">
-                    {car.financing && (
-                      <Badge variant="secondary">Finanțare</Badge>
-                    )}
-                    {car.exchange && (
-                      <Badge variant="secondary">Accept schimb</Badge>
+                    <Badge variant="outline" className="mb-2 text-xs uppercase tracking-wide">
+                      {listing.status ?? 'Disponibil'}
+                    </Badge>
+                    <CardTitle className="text-3xl leading-tight text-foreground">{listing.title}</CardTitle>
+                    {listing.subtitle && (
+                      <p className="text-muted-foreground">{listing.subtitle}</p>
                     )}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Contact */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Contactează Vânzătorul</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button className="w-full" size="lg">
-                  <Phone className="mr-2 h-4 w-4" />
-                  Sună Acum
-                </Button>
-                <Button variant="outline" className="w-full" size="lg">
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  Trimite Mesaj
-                </Button>
-                <Button variant="outline" className="w-full" size="lg">
-                  <Mail className="mr-2 h-4 w-4" />
-                  Email
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Vehicle History */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Istoric Vehicul</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Prima înmatriculare</p>
-                  <p className="font-medium">{car.firstRegistration}</p>
+                  <p className="text-4xl font-bold text-accent">{price}</p>
+                  {listing.price.oldValue ? (
+                    <p className="text-sm text-muted-foreground line-through">
+                      {priceFormatter.format(listing.price.oldValue)}
+                    </p>
+                  ) : null}
+                  {listing.price.labels?.length ? (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {listing.price.labels.map((label) => (
+                        <Badge key={label} variant="secondary">{label}</Badge>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Ultimul service</p>
-                  <p className="font-medium">{car.lastService}</p>
+
+                {listing.highlightTags?.length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {listing.highlightTags.map((tag) => (
+                      <Badge key={tag} variant="outline">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : null}
+
+                <Separator />
+
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Locație</p>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-accent" />
+                    <span className="text-sm text-foreground">
+                      {listing.seller?.location?.shortAddress ?? listing.seller?.city ?? 'Disponibil la dealer'}
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Următoarea ITP</p>
-                  <p className="font-medium">{car.nextTechnicalInspection}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">VIN</p>
-                  <p className="font-mono text-xs">{car.vin}</p>
-                </div>
+
+                <Button size="lg" className="w-full">
+                  Programează o vizionare
+                </Button>
               </CardContent>
             </Card>
+
+            {listing.seller && (
+              <Card id="contact-card">
+                <CardHeader>
+                  <CardTitle>Contactează vânzătorul</CardTitle>
+                  <p className="text-sm text-muted-foreground">{listing.seller.name}</p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex flex-wrap gap-2">
+                    {listing.seller.badges?.map((badge) => (
+                      <Badge key={badge.code} variant={getBadgeVariant(badge.code)}>
+                        {badge.label}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <div className="space-y-3">
+                    {listing.seller.phoneNumbers?.length ? (
+                      <Button className="w-full" size="lg" asChild>
+                        <a href={`tel:${listing.seller.phoneNumbers[0]}`}>
+                          <Phone className="mr-2 h-4 w-4" /> Sună acum
+                        </a>
+                      </Button>
+                    ) : null}
+                    <Button variant="outline" className="w-full" size="lg">
+                      <MessageCircle className="mr-2 h-4 w-4" /> Trimite mesaj
+                    </Button>
+                    {listing.seller.email ? (
+                      <Button variant="outline" className="w-full" size="lg" asChild>
+                        <a href={`mailto:${listing.seller.email}`}>
+                          <Mail className="mr-2 h-4 w-4" /> Trimite email
+                        </a>
+                      </Button>
+                    ) : null}
+                  </div>
+
+                  {listing.seller.workingHours?.length ? (
+                    <div className="rounded-lg bg-muted/40 p-4 text-sm">
+                      <p className="mb-2 font-semibold text-foreground">Program dealer</p>
+                      <ul className="space-y-1">
+                        {listing.seller.workingHours.map((slot) => (
+                          <li key={slot.day} className="flex justify-between">
+                            <span className="capitalize text-muted-foreground">
+                              {['Duminică', 'Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă'][slot.day]}
+                            </span>
+                            <span className="text-foreground">
+                              {slot.isOpen ? `${slot.openAt} - ${slot.closeAt}` : 'Închis'}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                </CardContent>
+              </Card>
+            )}
+
+            {listing.seller?.location?.latitude && listing.seller.location.longitude ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Locația pe hartă</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <iframe
+                    title="Hartă dealer"
+                    className="h-64 w-full rounded-lg border"
+                    loading="lazy"
+                    src={`https://maps.google.com/maps?q=${listing.seller.location.latitude},${listing.seller.location.longitude}&z=13&output=embed`}
+                    allowFullScreen
+                  />
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {listing.seller.location.shortAddress}
+                  </p>
+                </CardContent>
+              </Card>
+            ) : null}
+
+            {basicInfoGroup?.items?.length ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Informații de bază</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {basicInfoGroup.items.map((item) => (
+                    <div key={item.key} className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">{item.label}</span>
+                      <span className="font-medium text-foreground">{item.value ?? '—'}</span>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            ) : null}
+
+            {(listing.firstRegistration || listing.lastService || listing.technicalInspection || listing.vin) && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Istoric vehicul</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm">
+                  {listing.firstRegistration && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Prima înmatriculare</span>
+                      <span className="font-medium text-foreground">{listing.firstRegistration}</span>
+                    </div>
+                  )}
+                  {listing.lastService && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Ultimul service</span>
+                      <span className="font-medium text-foreground">{listing.lastService}</span>
+                    </div>
+                  )}
+                  {listing.technicalInspection && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Următoarea ITP</span>
+                      <span className="font-medium text-foreground">{listing.technicalInspection}</span>
+                    </div>
+                  )}
+                  {listing.vin && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">VIN</span>
+                      <span className="font-mono text-xs text-foreground">{listing.vin}</span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </main>

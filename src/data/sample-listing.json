@@ -1,0 +1,466 @@
+{
+  "id": "7058490663",
+  "autovitId": "7058490663",
+  "status": "ACTIVE",
+  "title": "Ford Fiesta 1.0 Start Stop Titanium",
+  "price": {
+    "value": 5290.0,
+    "currency": "EUR",
+    "oldValue": null,
+    "negotiable": false,
+    "labels": []
+  },
+  "mileageKm": 180000,
+  "registrationYear": 2015,
+  "engineCapacityCc": 999,
+  "enginePowerHp": 125,
+  "fuelType": "Benzina",
+  "gearbox": "Manuala",
+  "transmission": "Fata",
+  "bodyType": "Masina de oras",
+  "color": "Gri",
+  "emissionClass": null,
+  "co2Emissions": "99 g/km",
+  "consumption": {
+    "urban": "5.3 l/100km",
+    "extraUrban": "3.7 l/100km",
+    "combined": null
+  },
+  "vin": null,
+  "firstRegistration": null,
+  "description": "<p><b>FORD FIESTA</b> – Hatchback urban din 2015, recunoscut pentru fiabilitate și consum redus. Modelul Titanium 1.0 Start-Stop oferă un echilibru excelent între confort, siguranță și costuri de întreținere, fiind potrivit atât pentru oraș, cât și pentru drumuri mai lungi.<br></p><ul><li>Marca / Model: Ford Fiesta Titanium</li></ul><p>An fabricaţie: 2015/8</p><p>Tip motor: Benzină (ex: 1.0 EcoBoost sau alt motor de benzină)</p><p>Kilometraj: 180.000______ km</p><p>Caroserie: Hatchback / 5 uşi</p><p><br></p><p>Dotări standard / opţionale (nivel Titanium)</p><p>• Aer condiționat automat (climatronic)</p><p>• Faruri cu lumini de zi LED</p><p>• Proiectoare de ceaţă</p><p>• Faruri cu aprindere / stingere automată a fazei scurte</p><p>• Închidere centralizată cu telecomandă</p><p>• Geamuri electrice față</p><p>• Oglinzi laterale electrice, încălzite și semnalizate rabatabile</p><p>• Volan îmbrăcat în piele + comenzi pe volan</p><p>• Scaune sport faţă, scaun șofer reglabil înălțime și lombar</p><p>• Tapiţerie textilă / mixtă sport</p><p>• Jante din aliaj</p><p>• Sistem multimedia (touchscreen, Bluetooth, AUX/USB)</p><p>• Funcții smartphone integrate</p><p>• Sistem de asistență la condus: ESP / control stabilitate, ABS, Hill-Start Assist (plecare din rampă)</p><p>• Senzori de parcare spate faţă</p><p>• Senzor de ploaie, lumini automate</p><p>• Oglindă retrovizoare interioară electrocromată</p><p>• Keyless Entry / Keyless Go</p><p>• Tapiserie premium la interior, inserţii ambientale LED</p><p>Contact dealer: Cardeal, tel. <span id=\"hiddenPhoneNumber\" phoneNumber=\"SOnIf4bXj7nVvWw+O5JwaVpkTvvQWGtq1aY=.1./u6rxfNsTjM0fmULwzxfQw==\"></span>, email: vlcardeals@gmail.com.</p><p></p>",
+  "images": [
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6IjVtMGF0bng0Njl6bi1BVVRPVklUUk8iLCJ3IjpbeyJmbiI6InE3bXo1M2JpZnB6ay1BVVRPVklUUk8iLCJzIjoiMTYiLCJhIjoiMCIsInAiOiIxMCwtMTAifV19.gr2uWnCxScY68H9APpPo_O5_39ThMivk2jTSVpqm_Ng/image",
+      "isPrimary": true,
+      "caption": null
+    },
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6ImNxY2E0bGJoNmpyby1BVVRPVklUUk8iLCJ3IjpbeyJmbiI6InE3bXo1M2JpZnB6ay1BVVRPVklUUk8iLCJzIjoiMTYiLCJhIjoiMCIsInAiOiIxMCwtMTAifV19.2ajRYCZ9nmSoL5gVDCQ8xMObgIJcVzx_xGeICeM8TSU/image",
+      "isPrimary": false,
+      "caption": null
+    },
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6IndtenBwMTE5eGYzeTItQVVUT1ZJVFJPIiwidyI6W3siZm4iOiJxN216NTNiaWZwemstQVVUT1ZJVFJPIiwicyI6IjE2IiwiYSI6IjAiLCJwIjoiMTAsLTEwIn1dfQ.Aw1v7kBQc6Tim49Lf_IesrMiud2RTFCc9kFxF2CUMWs/image",
+      "isPrimary": false,
+      "caption": null
+    },
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6Im83dndlcWt6NTNncy1BVVRPVklUUk8iLCJ3IjpbeyJmbiI6InE3bXo1M2JpZnB6ay1BVVRPVklUUk8iLCJzIjoiMTYiLCJhIjoiMCIsInAiOiIxMCwtMTAifV19.6ZCKbByi0cMh62Hq1AZiN2PjyYm295ynkAd6MWkideg/image",
+      "isPrimary": false,
+      "caption": null
+    },
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6ImJvdXRmc284dW5jMS1BVVRPVklUUk8iLCJ3IjpbeyJmbiI6InE3bXo1M2JpZnB6ay1BVVRPVklUUk8iLCJzIjoiMTYiLCJhIjoiMCIsInAiOiIxMCwtMTAifV19.q5YEIXd5y4O-3EtfSUh0KKqJcLeP2Cekb0zvezPqOJo/image",
+      "isPrimary": false,
+      "caption": null
+    },
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6Imtvd2xyYnZocDN3My1BVVRPVklUUk8iLCJ3IjpbeyJmbiI6InE3bXo1M2JpZnB6ay1BVVRPVklUUk8iLCJzIjoiMTYiLCJhIjoiMCIsInAiOiIxMCwtMTAifV19.ASXFTMDkxVE8jn7ABoNf1WhoVrGEo179KUAR4zMMzmU/image",
+      "isPrimary": false,
+      "caption": null
+    },
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6Imkwc2hpNTM1ZXJhMDMtQVVUT1ZJVFJPIiwidyI6W3siZm4iOiJxN216NTNiaWZwemstQVVUT1ZJVFJPIiwicyI6IjE2IiwiYSI6IjAiLCJwIjoiMTAsLTEwIn1dfQ.Re1rPDG3Mx-z-xA8ysXNNwYvJe7_PQhaMAwbiS7kmyU/image",
+      "isPrimary": false,
+      "caption": null
+    },
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6Ind4MzgxNGJuOTg3cTItQVVUT1ZJVFJPIiwidyI6W3siZm4iOiJxN216NTNiaWZwemstQVVUT1ZJVFJPIiwicyI6IjE2IiwiYSI6IjAiLCJwIjoiMTAsLTEwIn1dfQ.QCdPQtGTvma6PyhaqATkpdsgAZNSm2s_EEif9Wjdb5o/image",
+      "isPrimary": false,
+      "caption": null
+    },
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6InFsdmhjcWRmZmZ6ajMtQVVUT1ZJVFJPIiwidyI6W3siZm4iOiJxN216NTNiaWZwemstQVVUT1ZJVFJPIiwicyI6IjE2IiwiYSI6IjAiLCJwIjoiMTAsLTEwIn1dfQ.Y6zjTy-kN3OwgAFTrhIM2NEI23YrwabxVQhvL5c41M4/image",
+      "isPrimary": false,
+      "caption": null
+    },
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6ImEycmlscnZ2OGFicDEtQVVUT1ZJVFJPIiwidyI6W3siZm4iOiJxN216NTNiaWZwemstQVVUT1ZJVFJPIiwicyI6IjE2IiwiYSI6IjAiLCJwIjoiMTAsLTEwIn1dfQ.5z4GtgXHTM3fRabKJBhD3DeApgYVlmlxdnia99MGNFY/image",
+      "isPrimary": false,
+      "caption": null
+    },
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6ImZ3ZjI3OXVxNDIzNjMtQVVUT1ZJVFJPIiwidyI6W3siZm4iOiJxN216NTNiaWZwemstQVVUT1ZJVFJPIiwicyI6IjE2IiwiYSI6IjAiLCJwIjoiMTAsLTEwIn1dfQ.UuaCL-574MwN-anPrd0en1P_npon675afc1Q_xcQ19w/image",
+      "isPrimary": false,
+      "caption": null
+    },
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6Imk5cWw4dHRmazFhdDEtQVVUT1ZJVFJPIiwidyI6W3siZm4iOiJxN216NTNiaWZwemstQVVUT1ZJVFJPIiwicyI6IjE2IiwiYSI6IjAiLCJwIjoiMTAsLTEwIn1dfQ.1nfG70UwIPh0oif-ALxYC87pUAUj-3SsYVXftKd1Ak4/image",
+      "isPrimary": false,
+      "caption": null
+    },
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6ImJnb3ZnczJmb3hoOTEtQVVUT1ZJVFJPIiwidyI6W3siZm4iOiJxN216NTNiaWZwemstQVVUT1ZJVFJPIiwicyI6IjE2IiwiYSI6IjAiLCJwIjoiMTAsLTEwIn1dfQ.Qr08acuHPCxKPjmicwgw1nYH-a8GHZxyYG4tNaGwBvs/image",
+      "isPrimary": false,
+      "caption": null
+    },
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6ImZheDd3dW5jbG45cTEtQVVUT1ZJVFJPIiwidyI6W3siZm4iOiJxN216NTNiaWZwemstQVVUT1ZJVFJPIiwicyI6IjE2IiwiYSI6IjAiLCJwIjoiMTAsLTEwIn1dfQ.ur-LVqP2wf1gw7fiHA-jukKA6p9VE09FcWLGvUFvCPs/image",
+      "isPrimary": false,
+      "caption": null
+    },
+    {
+      "url": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6Inlob3BmMGhoN3Y5di1BVVRPVklUUk8iLCJ3IjpbeyJmbiI6InE3bXo1M2JpZnB6ay1BVVRPVklUUk8iLCJzIjoiMTYiLCJhIjoiMCIsInAiOiIxMCwtMTAifV19.DJk5jv8USd-PgFoySvgPSWig00CGFBHI_3nunqdOwA0/image",
+      "isPrimary": false,
+      "caption": null
+    }
+  ],
+  "mainFeatures": [
+    {
+      "label": "An fabricație",
+      "value": "2015"
+    },
+    {
+      "label": "Kilometraj",
+      "value": "180 000 km"
+    },
+    {
+      "label": "Capacitate cilindrică",
+      "value": "999 cm3"
+    },
+    {
+      "label": "Combustibil",
+      "value": "Benzina"
+    }
+  ],
+  "featureGroups": [
+    {
+      "key": "comfort_and_addons",
+      "label": "Confort si echipamente optionale",
+      "items": [
+        "Aer conditionat",
+        "Cotiera (fata)",
+        "Volan piele",
+        "Schimbator viteze piele",
+        "Geamuri electrice fata"
+      ]
+    },
+    {
+      "key": "electronics_and_driver_assistance",
+      "label": "Electronice si sisteme de asistenta",
+      "items": [
+        "Oglinzi exterioare cu reglare electrica",
+        "Asistenta in rampa",
+        "Faruri ceata",
+        "Servodirectie"
+      ]
+    },
+    {
+      "key": "security",
+      "label": "Siguranta",
+      "items": [
+        "ABS",
+        "ESP",
+        "EBD",
+        "Franare asistata",
+        "Airbag sofer",
+        "Airbag scaun pasager",
+        "Airbag genunchi sofer",
+        "Airbag genunchi pasager",
+        "Airbag-uri cap fata",
+        "Airbag lateral sofer si pasager",
+        "Airbag-uri cap spate",
+        "Airbag-uri laterale spate",
+        "Isofix"
+      ]
+    }
+  ],
+  "details": [
+    {
+      "key": "make",
+      "label": "Marca",
+      "value": "Ford",
+      "description": null,
+      "group": "basic_information",
+      "href": "https://www.autovit.ro/autoturisme/ford",
+      "order": null
+    },
+    {
+      "key": "model",
+      "label": "Model",
+      "value": "Fiesta",
+      "description": null,
+      "group": "basic_information",
+      "href": "https://www.autovit.ro/autoturisme/ford/fiesta",
+      "order": null
+    },
+    {
+      "key": "version",
+      "label": "Versiune",
+      "value": "1.0 Start Stop Titanium",
+      "description": null,
+      "group": "basic_information",
+      "href": "https://www.autovit.ro/autoturisme/ford/fiesta/ver-1-0-start-stop-titanium",
+      "order": null
+    },
+    {
+      "key": "color",
+      "label": "Culoare",
+      "value": "Gri",
+      "description": null,
+      "group": "basic_information",
+      "href": "https://www.autovit.ro/autoturisme/ford/fiesta/ver-1-0-start-stop-titanium?search%5Bfilter_enum_color%5D%5B0%5D=gray",
+      "order": null
+    },
+    {
+      "key": "door_count",
+      "label": "Numar de portiere",
+      "value": "5",
+      "description": null,
+      "group": "basic_information",
+      "href": "https://www.autovit.ro/autoturisme/ford/fiesta/ver-1-0-start-stop-titanium?search%5Bfilter_enum_door_count%5D%5B0%5D=5",
+      "order": null
+    },
+    {
+      "key": "year",
+      "label": "Anul producției",
+      "value": "2015",
+      "description": null,
+      "group": "basic_information",
+      "href": null,
+      "order": null
+    },
+    {
+      "key": "generation",
+      "label": "Generatie",
+      "value": "VII [2008 - 2017]",
+      "description": "O generație reprezintă o serie de modele produse într-o anumită perioadă, cu schimbări majore de design, tehnologie și specificații. Versiunile sunt variații ale unei generații, cu diferențe la nivel de dotări și opțiuni.",
+      "group": "basic_information",
+      "href": "https://www.autovit.ro/autoturisme/ford/fiesta/ver-1-0-start-stop-titanium?search%5Bfilter_enum_generation%5D%5B0%5D=gen-vii-2008-2017",
+      "order": null
+    },
+    {
+      "key": "fuel_type",
+      "label": "Combustibil",
+      "value": "Benzina",
+      "description": null,
+      "group": "technical_specs",
+      "href": null,
+      "order": 1
+    },
+    {
+      "key": "engine_capacity",
+      "label": "Capacitate cilindrica",
+      "value": "999 cm3",
+      "description": null,
+      "group": "technical_specs",
+      "href": null,
+      "order": 4
+    },
+    {
+      "key": "engine_power",
+      "label": "Putere",
+      "value": "125 CP",
+      "description": null,
+      "group": "technical_specs",
+      "href": null,
+      "order": 5
+    },
+    {
+      "key": "body_type",
+      "label": "Tip Caroserie",
+      "value": "Masina de oras",
+      "description": null,
+      "group": "technical_specs",
+      "href": null,
+      "order": 3
+    },
+    {
+      "key": "gearbox",
+      "label": "Cutie de viteze",
+      "value": "Manuala",
+      "description": null,
+      "group": "technical_specs",
+      "href": null,
+      "order": 2
+    },
+    {
+      "key": "transmission",
+      "label": "Transmisie",
+      "value": "Fata",
+      "description": null,
+      "group": "technical_specs",
+      "href": null,
+      "order": null
+    },
+    {
+      "key": "co2_emissions",
+      "label": "Emisii CO2",
+      "value": "99 g/km",
+      "description": "Cantitatea de dioxid de carbon emisă de vehicul, măsurată în grame pe kilometru (g/km), indicând impactul asupra mediului.",
+      "group": "technical_specs",
+      "href": null,
+      "order": null
+    },
+    {
+      "key": "urban_consumption",
+      "label": "Consum Urban",
+      "value": "5.3 l/100km",
+      "description": null,
+      "group": "technical_specs",
+      "href": null,
+      "order": null
+    },
+    {
+      "key": "extra_urban_consumption",
+      "label": "Consum Extraurban",
+      "value": "3.7 l/100km",
+      "description": null,
+      "group": "technical_specs",
+      "href": null,
+      "order": null
+    },
+    {
+      "key": "mileage",
+      "label": "Km",
+      "value": "180 000 km",
+      "description": null,
+      "group": "condition_history",
+      "href": null,
+      "order": 0
+    },
+    {
+      "key": "new_used",
+      "label": "Stare",
+      "value": "Utilizat",
+      "description": null,
+      "group": "condition_history",
+      "href": null,
+      "order": null
+    }
+  ],
+  "technicalSpecs": [
+    {
+      "label": "Combustibil",
+      "value": "Benzina",
+      "category": "technical_specs",
+      "order": 1
+    },
+    {
+      "label": "Capacitate cilindrica",
+      "value": "999 cm3",
+      "category": "technical_specs",
+      "order": 4
+    },
+    {
+      "label": "Putere",
+      "value": "125 CP",
+      "category": "technical_specs",
+      "order": 5
+    },
+    {
+      "label": "Tip Caroserie",
+      "value": "Masina de oras",
+      "category": "technical_specs",
+      "order": 3
+    },
+    {
+      "label": "Cutie de viteze",
+      "value": "Manuala",
+      "category": "technical_specs",
+      "order": 2
+    },
+    {
+      "label": "Transmisie",
+      "value": "Fata",
+      "category": "technical_specs",
+      "order": null
+    },
+    {
+      "label": "Emisii CO2",
+      "value": "99 g/km",
+      "category": "technical_specs",
+      "order": null
+    },
+    {
+      "label": "Consum Urban",
+      "value": "5.3 l/100km",
+      "category": "technical_specs",
+      "order": null
+    },
+    {
+      "label": "Consum Extraurban",
+      "value": "3.7 l/100km",
+      "category": "technical_specs",
+      "order": null
+    }
+  ],
+  "badges": [],
+  "seller": {
+    "id": "4534086",
+    "name": "Cardeal",
+    "type": "PROFESSIONAL",
+    "phoneNumbers": [
+      "/EmFhhE+b4uBZJbnYxT68rAB/sk0vhs/JtyTnA==.1.ic4aug/+hGmu5EeoBARLaA==",
+      "AU0fkH0VSm0zj4+uzNYhCQclmcuQBATT/ep0Sg==.1.mWBAXvfVHYPGCs6MWt6Azw==",
+      "lR1i7DEAzzRpAoz0ezFjpSEriAVWHhLquvGe5g==.1./tFDlaWxBnSOeoHEEq/zlA=="
+    ],
+    "address": "Capusul mare - 407145 Capusu Mare, Judet Cluj (Romania)",
+    "city": "Capusu Mare",
+    "county": "",
+    "badges": [
+      {
+        "code": "dealer",
+        "label": "Dealer"
+      },
+      {
+        "code": "fast-reply",
+        "label": "Răspunde rapid la mesaje"
+      },
+      {
+        "code": "registration-date",
+        "label": "Vânzător pe Autovit.ro din 2025"
+      }
+    ],
+    "workingHours": [
+      {
+        "isOpen": true,
+        "day": 1,
+        "openAt": "08:00",
+        "closeAt": "20:00"
+      },
+      {
+        "isOpen": true,
+        "day": 2,
+        "openAt": "08:00",
+        "closeAt": "20:00"
+      },
+      {
+        "isOpen": true,
+        "day": 3,
+        "openAt": "08:00",
+        "closeAt": "20:00"
+      },
+      {
+        "isOpen": true,
+        "day": 4,
+        "openAt": "08:00",
+        "closeAt": "20:00"
+      },
+      {
+        "isOpen": true,
+        "day": 5,
+        "openAt": "08:00",
+        "closeAt": "20:00"
+      },
+      {
+        "isOpen": true,
+        "day": 6,
+        "openAt": "08:00",
+        "closeAt": "20:00"
+      },
+      {
+        "isOpen": true,
+        "day": 0,
+        "openAt": "08:00",
+        "closeAt": "20:00"
+      }
+    ],
+    "location": {
+      "latitude": 46.79137,
+      "longitude": 23.28855,
+      "shortAddress": "Capusul mare - 407145 Capusu Mare, Judet Cluj (Romania)"
+    }
+  }
+}
