@@ -116,14 +116,18 @@ All colors MUST be HSL.
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
 }
 
 @layer base {
   * {
     @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
   }
 }

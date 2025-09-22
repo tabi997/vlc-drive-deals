@@ -20,6 +20,7 @@ import {
   type ListingMutationPayload,
 } from '@/hooks/useAdminListings';
 import { supabase, hasSupabaseClient } from '@/lib/supabaseClient';
+import { parseDescription } from '@/lib/description';
 
 const statusColor: Record<string, string> = {
   ACTIVE: 'bg-emerald-500 text-emerald-900',
@@ -305,11 +306,33 @@ const AdminPage = () => {
                       </Button>
                     </div>
                   </div>
-                  {listing.description && (
-                    <p className="mt-3 max-h-24 overflow-hidden text-sm text-muted-foreground">
-                      {listing.description}
-                    </p>
-                  )}
+                  {(() => {
+                    const blocks = listing.description ? parseDescription(listing.description) : [];
+                    if (!blocks.length) return null;
+                    const previewBlocks = blocks.slice(0, 2);
+                    return (
+                      <div className="mt-3 max-h-32 space-y-2 overflow-hidden text-sm text-muted-foreground">
+                        {previewBlocks.map((block, index) => {
+                          if (block.type === 'list') {
+                            return (
+                              <ul key={`preview-list-${listing.id}-${index}`} className="list-disc space-y-1 pl-4">
+                                {block.items.map((item, idx) => (
+                                  <li key={idx} className="leading-relaxed">
+                                    {item}
+                                  </li>
+                                ))}
+                              </ul>
+                            );
+                          }
+                          return (
+                            <p key={`preview-paragraph-${listing.id}-${index}`} className="leading-relaxed">
+                              {block.content}
+                            </p>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
                   <Separator className="my-3" />
                   <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
                     {listing.highlightTags?.map((tag) => (

@@ -48,28 +48,33 @@ const Index = () => {
       <Header />
       
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+      <section className="relative flex min-h-[calc(100vh-72px)] items-center justify-center overflow-hidden pt-24 pb-16 sm:pt-32">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${heroImage})` }}
         >
-          <div className="absolute inset-0 bg-gradient-hero opacity-80"></div>
+          <div className="absolute inset-0 bg-gradient-hero opacity-90"></div>
         </div>
         
-        <div className="relative z-10 container mx-auto px-4 text-center text-primary-foreground">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 drop-shadow-lg">
+        <div className="relative z-10 container mx-auto max-w-5xl px-4 text-center text-primary-foreground">
+          <h1 className="text-4xl font-bold leading-tight drop-shadow-lg sm:text-5xl md:text-6xl">
             VLC <span className="text-accent">CAR DEALS</span>
           </h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto drop-shadow-md">
-            Găsește mașina perfectă din selecția noastră premium de vehicule second-hand verificate și garantate
+          <p className="mt-4 text-base leading-relaxed drop-shadow-md sm:text-lg md:text-xl">
+            Găsește mașina perfectă din selecția noastră premium de vehicule second-hand verificate și garantate.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-glow text-lg px-8 py-6">
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Button asChild size="lg" className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90 shadow-glow">
               <Link to="/cumpara">
                 Vezi Mașinile <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="border-2 border-white text-white bg-white/10 backdrop-blur-sm hover:bg-white hover:text-primary text-lg px-8 py-6">
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="w-full sm:w-auto border border-white/60 bg-white/10 text-white backdrop-blur-sm hover:bg-white hover:text-primary"
+            >
               <Link to="/vinde">
                 Vinde Mașina Ta
               </Link>
@@ -79,28 +84,30 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
+      <section className="bg-muted/30 py-16 sm:py-20">
+        <div className="container mx-auto max-w-6xl px-4">
+          <div className="mb-12 text-center sm:mb-16">
+            <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
               De Ce Să Alegi VLC Car Deals?
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto mt-3 max-w-2xl text-base text-muted-foreground sm:text-lg md:text-xl">
               Suntem mai mult decât un dealer auto - suntem partenerii tăi de încredere în călătoria către mașina ideală.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="text-center hover:shadow-card-custom transition-smooth group">
+              <Card key={index} className="group h-full text-center transition-smooth hover:shadow-card-custom">
                 <CardHeader className="pb-4">
-                  <div className="mx-auto bg-gradient-accent p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4 group-hover:scale-110 transition-bounce">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-accent p-4 transition-transform group-hover:scale-110">
                     <feature.icon className="h-8 w-8 text-accent-foreground" />
                   </div>
                   <CardTitle className="text-xl text-foreground">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-base">{feature.description}</CardDescription>
+                  <CardDescription className="text-sm text-muted-foreground sm:text-base">
+                    {feature.description}
+                  </CardDescription>
                 </CardContent>
               </Card>
             ))}
@@ -112,19 +119,19 @@ const Index = () => {
       <FeaturedCarsCarousel />
 
       {/* Services Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
+      <section className="py-16 sm:py-20">
+        <div className="container mx-auto max-w-6xl px-4">
+          <div className="mb-12 text-center sm:mb-16 space-y-3">
+            <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
               Serviciile Noastre
             </h2>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-base text-muted-foreground sm:text-lg md:text-xl">
               Soluții complete pentru toate nevoile tale auto
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="hover:shadow-card-custom transition-smooth">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+            <Card className="h-full transition-smooth hover:shadow-card-custom">
               <CardHeader>
                 <div className="flex items-center gap-3 mb-4">
                   <Car className="h-8 w-8 text-accent" />
@@ -141,7 +148,7 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-card-custom transition-smooth">
+            <Card className="h-full transition-smooth hover:shadow-card-custom">
               <CardHeader>
                 <div className="flex items-center gap-3 mb-4">
                   <Star className="h-8 w-8 text-accent" />
@@ -158,7 +165,7 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-card-custom transition-smooth">
+            <Card className="h-full transition-smooth hover:shadow-card-custom">
               <CardHeader>
                 <div className="flex items-center gap-3 mb-4">
                   <Award className="h-8 w-8 text-accent" />
@@ -179,30 +186,30 @@ const Index = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Ce Spun Clienții Noștri
-            </h2>
-            <p className="text-xl text-muted-foreground">
+      <section className="bg-muted/30 py-16 sm:py-20">
+        <div className="container mx-auto max-w-6xl px-4">
+          <div className="mb-12 space-y-3 text-center sm:mb-16">
+            <h2 className="text-3xl font-bold text-foreground sm:text-4xl">Ce Spun Clienții Noștri</h2>
+            <p className="text-base text-muted-foreground sm:text-lg md:text-xl">
               Peste 5000 de șoferi mulțumiți ne recomandă
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="hover:shadow-card-custom transition-smooth">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+            {testimonials.map((testimonial) => (
+              <Card key={testimonial.name} className="h-full transition-smooth hover:shadow-card-custom">
                 <CardHeader>
-                  <div className="flex gap-1 mb-2">
+                  <div className="mb-2 flex gap-1">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-accent text-accent" />
+                      <Star key={`${testimonial.name}-${i}`} className="h-5 w-5 fill-accent text-accent" />
                     ))}
                   </div>
-                  <CardTitle className="text-lg">{testimonial.name}</CardTitle>
+                  <CardTitle className="text-lg text-foreground sm:text-xl">{testimonial.name}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground italic">"{testimonial.text}"</p>
+                  <CardDescription className="text-sm text-muted-foreground italic sm:text-base">
+                    „{testimonial.text}”
+                  </CardDescription>
                 </CardContent>
               </Card>
             ))}
@@ -211,21 +218,26 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-automotive">
+      <section className="bg-gradient-automotive py-16 sm:py-20">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold text-primary-foreground mb-6">
+          <h2 className="text-3xl font-bold text-primary-foreground sm:text-4xl">
             Gata să Găsești Mașina Perfectă?
           </h2>
-          <p className="text-xl text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
+          <p className="mx-auto mt-4 mb-8 max-w-2xl text-base text-primary-foreground/80 sm:text-lg md:text-xl">
             Începe călătoria către următorul tău vehicul cu cel mai de încredere dealer din România
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary" className="shadow-glow">
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Button asChild size="lg" variant="secondary" className="w-full sm:w-auto shadow-glow">
               <Link to="/cumpara">
                 Explorează Mașinile <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="border-2 border-white text-white bg-white/10 backdrop-blur-sm hover:bg-white hover:text-primary">
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="w-full sm:w-auto border border-white/60 bg-white/10 text-white backdrop-blur-sm hover:bg-white hover:text-primary"
+            >
               <Link to="/masini-la-comanda">
                 Comandă Personalizat
               </Link>
