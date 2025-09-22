@@ -107,12 +107,7 @@ const CarDetail = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const { data: listing, isLoading } = useListing({ id });
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
-
-  useEffect(() => {
-    setCurrentImageIndex(0);
-  }, [listing?.id]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
