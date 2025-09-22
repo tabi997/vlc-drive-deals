@@ -236,11 +236,19 @@ const Cumpara = () => {
             Explorează opțiunile noastre de mașini la comandă sau vinde-ne vehiculul tău actual.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="secondary" size="lg" className="shadow-glow">
-              Mașini la Comandă
+            <Button asChild variant="secondary" size="lg" className="shadow-glow">
+              <Link to="/masini-la-comanda">
+                Mașini la Comandă
+              </Link>
             </Button>
-            <Button variant="outline" size="lg" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
-              Vinde Mașina Ta
+            <Button
+              asChild
+              size="lg"
+              className="bg-white text-primary hover:bg-white/90 shadow-glow"
+            >
+              <Link to="/vinde">
+                Vinde Mașina Ta
+              </Link>
             </Button>
           </div>
         </div>
