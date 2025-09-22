@@ -20,7 +20,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useListing } from '@/hooks/useListing';
 import { parseDescription } from '@/lib/description';
 import type { ListingDetail, ListingFeatureGroup } from '@/types/listing';
@@ -113,13 +112,16 @@ const CarDetail = () => {
   }, [listing?.id]);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [listing?.id]);
+
+  useEffect(() => {
     if (searchParams.get('action') === 'contact') {
       document.getElementById('contact-card')?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [searchParams]);
 
   const groupedDetails = useMemo(() => groupDetails(listing?.details), [listing?.details]);
-  const featureTabs = useMemo(() => featureGroupsToTabs(listing?.featureGroups), [listing?.featureGroups]);
   const descriptionBlocks = useMemo(() => parseDescription(listing?.description), [listing?.description]);
   const images = useMemo(() => (listing?.images?.length ? listing.images : [{ url: FALLBACK_IMAGE, isPrimary: true }]), [listing]);
   const quickStats = useMemo(() => {
@@ -226,12 +228,19 @@ const CarDetail = () => {
           <div className="lg:col-span-2 space-y-6">
             <Card className="overflow-hidden">
               <div className="relative">
-                <img
-                  src={images[currentImageIndex]?.url ?? FALLBACK_IMAGE}
-                  alt={listing.title}
-                  loading="lazy"
-                  className="h-72 w-full object-cover sm:h-80 md:h-96"
-                />
+                <div className="w-full overflow-hidden">
+                  <div className="relative flex snap-x snap-mandatory overflow-x-auto scroll-smooth">
+                    {images.map((image, index) => (
+                      <img
+                        key={image.url}
+                        src={image.url}
+                        alt={`${listing.title} ${index + 1}`}
+                        loading="lazy"
+                        className="h-72 w-full flex-shrink-0 snap-center object-cover sm:h-80 md:h-96"
+                      />
+                    ))}
+                  </div>
+                </div>
                 <div className="absolute right-4 top-4 flex gap-2">
                   <Button
                     size="sm"
@@ -251,29 +260,6 @@ const CarDetail = () => {
                   </Badge>
                 )}
               </div>
-              {images.length > 1 && (
-                <div className="p-4">
-                  <div className="flex gap-2 overflow-x-auto">
-                    {images.map((image, index) => (
-                      <button
-                        key={image.url}
-                        type="button"
-                        onClick={() => setCurrentImageIndex(index)}
-                        className={`flex-shrink-0 overflow-hidden rounded-lg border-2 transition-smooth ${
-                          currentImageIndex === index ? 'border-accent' : 'border-transparent'
-                        }`}
-                      >
-                        <img
-                          src={image.url}
-                          alt={`${listing.title} ${index + 1}`}
-                          loading="lazy"
-                          className="h-16 w-20 object-cover"
-                        />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
             </Card>
 
             <Card>
@@ -336,36 +322,6 @@ const CarDetail = () => {
               </CardContent>
             </Card>
 
-            {featureTabs?.length ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Dotări și opțiuni</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Tabs defaultValue={featureTabs[0]?.key ?? '0'} className="w-full">
-                    <TabsList className="flex flex-wrap justify-start gap-2 bg-muted/40 p-1">
-                      {featureTabs.map((tab) => (
-                        <TabsTrigger key={tab.key} value={tab.key} className="whitespace-nowrap">
-                          {tab.label}
-                        </TabsTrigger>
-                      ))}
-                    </TabsList>
-                    {featureTabs.map((tab) => (
-                      <TabsContent key={tab.key} value={tab.key} className="mt-4">
-                        <div className="grid gap-2 sm:grid-cols-2">
-                          {tab.items.map((item) => (
-                            <div key={item} className="flex items-center gap-2 text-sm">
-                              <CheckCircle className="h-4 w-4 text-accent" />
-                              <span>{item}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </TabsContent>
-                    ))}
-                  </Tabs>
-                </CardContent>
-              </Card>
-            ) : null}
 
             {technicalGroup?.items?.length ? (
               <Card>
