@@ -1,102 +1,115 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Car, Fuel, Calendar, Settings, Heart, Eye } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Car, Fuel, Calendar, Settings, Gauge, MapPin } from 'lucide-react';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useListings } from '@/hooks/useListings';
+import type { ListingSummary } from '@/types/listing';
 
-// Mock data for cars
-const mockCars = [
-  {
-    id: 1,
-    make: 'BMW',
-    model: 'Seria 3',
-    year: 2019,
-    price: 28500,
-    mileage: 95000,
-    fuel: 'Diesel',
-    transmission: 'Automată',
-    color: 'Negru',
-    image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 2,
-    make: 'Audi',
-    model: 'A4',
-    year: 2020,
-    price: 32000,
-    mileage: 67000,
-    fuel: 'Benzină',
-    transmission: 'Manuală',
-    color: 'Alb',
-    image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 3,
-    make: 'Mercedes-Benz',
-    model: 'C-Class',
-    year: 2021,
-    price: 45000,
-    mileage: 45000,
-    fuel: 'Hibrid',
-    transmission: 'Automată',
-    color: 'Argintiu',
-    image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 4,
-    make: 'Volkswagen',
-    model: 'Golf',
-    year: 2018,
-    price: 18500,
-    mileage: 120000,
-    fuel: 'Benzină',
-    transmission: 'Manuală',
-    color: 'Roșu',
-    image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 5,
-    make: 'Toyota',
-    model: 'Camry',
-    year: 2020,
-    price: 26000,
-    mileage: 78000,
-    fuel: 'Hibrid',
-    transmission: 'Automată',
-    color: 'Albastru',
-    image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 6,
-    make: 'Ford',
-    model: 'Focus',
-    year: 2019,
-    price: 16500,
-    mileage: 98000,
-    fuel: 'Benzină',
-    transmission: 'Manuală',
-    color: 'Gri',
-    image: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-  }
-];
+const priceFormatter = new Intl.NumberFormat('ro-RO', {
+  style: 'currency',
+  currency: 'EUR',
+  maximumFractionDigits: 0,
+});
+
+const formatMileage = (mileage?: number | null) => {
+  if (mileage == null) return '—';
+  return `${new Intl.NumberFormat('ro-RO').format(mileage)} km`;
+};
+
+const getPrimaryBadge = (listing: ListingSummary) => listing.badges?.[0]?.label;
+
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1549921296-3c48d285d0c5?auto=format&fit=crop&w=1200&q=80';
 
 const Cumpara = () => {
-  const [favorites, setFavorites] = useState<number[]>([]);
-  const [filter, setFilter] = useState('all');
+  const { data: listings = [], isLoading } = useListings();
+  const [activeFuel, setActiveFuel] = useState<string>('all');
 
-  const toggleFavorite = (carId: number) => {
-    setFavorites(prev => 
-      prev.includes(carId) 
-        ? prev.filter(id => id !== carId)
-        : [...prev, carId]
+  const availableFuelFilters = useMemo(() => {
+    const fuels = new Set<string>();
+    listings.forEach((listing) => {
+      if (listing.fuelType) {
+        fuels.add(listing.fuelType);
+      }
+    });
+    return Array.from(fuels);
+  }, [listings]);
+
+  const filteredListings = useMemo(() => {
+    if (activeFuel === 'all') return listings;
+    return listings.filter((listing) => listing.fuelType?.toLowerCase() === activeFuel.toLowerCase());
+  }, [listings, activeFuel]);
+
+  const renderCard = (listing: ListingSummary) => {
+    const badge = getPrimaryBadge(listing);
+    return (
+      <Card key={listing.id} className="group overflow-hidden transition-smooth hover:shadow-card-custom">
+        <div className="relative">
+          <Link to={`/car/${listing.id}`} className="block">
+            <img
+              src={listing.mainImage ?? FALLBACK_IMAGE}
+              alt={listing.title}
+              className="h-48 w-full object-cover transition-smooth group-hover:scale-105"
+            />
+          </Link>
+          {badge && (
+            <Badge className="absolute left-4 top-4 bg-accent text-accent-foreground">
+              {badge}
+            </Badge>
+          )}
+        </div>
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className="text-xl font-semibold text-foreground">
+                {listing.title}
+              </h3>
+              <p className="flex items-center gap-1 text-sm text-muted-foreground">
+                <MapPin className="h-4 w-4" />
+                {listing.location ?? 'Disponibil în stoc' }
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-2xl font-bold text-accent">
+                {priceFormatter.format(listing.priceValue)}
+              </p>
+              <p className="text-xs text-muted-foreground uppercase">{listing.priceCurrency}</p>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Calendar className="h-4 w-4" />
+              {listing.year ?? '—'}
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Gauge className="h-4 w-4" />
+              {formatMileage(listing.mileageKm)}
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Fuel className="h-4 w-4" />
+              {listing.fuelType ?? '—'}
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Settings className="h-4 w-4" />
+              {listing.gearbox ?? '—'}
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button className="flex-1" variant="default" asChild>
+              <Link to={`/car/${listing.id}`}>Detalii</Link>
+            </Button>
+            <Button className="flex-1" variant="outline" asChild>
+              <Link to={`/car/${listing.id}?action=contact`}>Contactează</Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     );
   };
-
-  const filteredCars = filter === 'all' 
-    ? mockCars 
-    : mockCars.filter(car => car.make.toLowerCase() === filter);
 
   return (
     <div className="min-h-screen bg-background">
@@ -113,119 +126,45 @@ const Cumpara = () => {
           </p>
         </div>
 
-        {/* Filters */}
+        {/* Quick Filters */}
         <div className="mb-8 flex flex-wrap gap-3">
-          <Button 
-            variant={filter === 'all' ? 'default' : 'outline'}
-            onClick={() => setFilter('all')}
+          <Button
+            variant={activeFuel === 'all' ? 'default' : 'outline'}
+            onClick={() => setActiveFuel('all')}
           >
-            Toate
+            Toate combustibilele
           </Button>
-          <Button 
-            variant={filter === 'bmw' ? 'default' : 'outline'}
-            onClick={() => setFilter('bmw')}
-          >
-            BMW
-          </Button>
-          <Button 
-            variant={filter === 'audi' ? 'default' : 'outline'}
-            onClick={() => setFilter('audi')}
-          >
-            Audi
-          </Button>
-          <Button 
-            variant={filter === 'mercedes-benz' ? 'default' : 'outline'}
-            onClick={() => setFilter('mercedes-benz')}
-          >
-            Mercedes-Benz
-          </Button>
+          {availableFuelFilters.map((fuel) => (
+            <Button
+              key={fuel}
+              variant={activeFuel === fuel ? 'default' : 'outline'}
+              onClick={() => setActiveFuel(fuel)}
+            >
+              {fuel}
+            </Button>
+          ))}
         </div>
 
         {/* Car Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCars.map((car) => (
-            <Card key={car.id} className="overflow-hidden hover:shadow-card-custom transition-smooth group">
-              <div className="relative">
-                <Link to={`/car/${car.id}`}>
-                  <img 
-                    src={car.image} 
-                    alt={`${car.make} ${car.model}`}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-smooth cursor-pointer"
-                  />
-                </Link>
-                <div className="absolute top-4 right-4 flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => toggleFavorite(car.id)}
-                    className="p-2 bg-card/80 backdrop-blur-sm hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <Heart 
-                      className={`h-4 w-4 ${favorites.includes(car.id) ? 'fill-red-500 text-red-500' : ''}`} 
-                    />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    asChild
-                    className="p-2 bg-card/80 backdrop-blur-sm hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <Link to={`/car/${car.id}`}>
-                      <Eye className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                </div>
-                <Badge className="absolute top-4 left-4 bg-accent text-accent-foreground">
-                  {car.year}
-                </Badge>
-              </div>
-              
-              <CardHeader className="pb-3">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground">
-                      {car.make} {car.model}
-                    </h3>
-                    <p className="text-muted-foreground">{car.color}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-accent">
-                      €{car.price.toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-              </CardHeader>
-
-              <CardContent className="pt-0">
-                <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    {car.mileage.toLocaleString()} km
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Fuel className="h-4 w-4" />
-                    {car.fuel}
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground col-span-2">
-                    <Settings className="h-4 w-4" />
-                    {car.transmission}
-                  </div>
-                </div>
-                
-                <div className="flex gap-2">
-                  <Button className="flex-1" variant="default">
-                    Contactează
-                  </Button>
-                  <Button variant="outline" className="flex-1" asChild>
-                    <Link to={`/car/${car.id}`}>
-                      Detalii
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <Card key={index} className="animate-pulse">
+                <div className="h-48 w-full bg-muted" />
+                <CardHeader>
+                  <div className="h-5 w-3/4 bg-muted" />
+                </CardHeader>
+                <CardContent>
+                  <div className="h-4 w-full bg-muted" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredListings.map(renderCard)}
+          </div>
+        )}
 
         {/* Call to Action */}
         <div className="mt-16 text-center bg-gradient-automotive rounded-2xl p-8 shadow-automotive">
