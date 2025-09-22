@@ -22,6 +22,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useListing } from '@/hooks/useListing';
+import { parseDescription } from '@/lib/description';
 import type { ListingDetail, ListingFeatureGroup } from '@/types/listing';
 
 const priceFormatter = new Intl.NumberFormat('ro-RO', {
@@ -50,9 +51,12 @@ const groupDetails = (details?: ListingDetail[]) => {
   details.forEach((detail) => {
     const key = detail.group ?? 'other';
     if (!map.has(key)) {
+      const fallbackLabel = detail.group
+        ? detail.group.replace(/_/g, ' ').toUpperCase()
+        : 'Detalii';
       map.set(key, {
         key,
-        label: DETAIL_GROUP_LABELS[key] ?? detail.group?.replace('_', ' ').toUpperCase() ?? 'Detalii',
+        label: DETAIL_GROUP_LABELS[key] ?? fallbackLabel,
         items: [],
       });
     }
@@ -114,7 +118,47 @@ const CarDetail = () => {
     }
   }, [searchParams]);
 
-  if (isLoading) {
+  const groupedDetails = useMemo(() => groupDetails(listing?.details), [listing?.details]);
+  const featureTabs = useMemo(() => featureGroupsToTabs(listing?.featureGroups), [listing?.featureGroups]);
+  const descriptionBlocks = useMemo(() => parseDescription(listing?.description), [listing?.description]);
+  const images = useMemo(() => (listing?.images?.length ? listing.images : [{ url: FALLBACK_IMAGE, isPrimary: true }]), [listing]);
+  const quickStats = useMemo(() => {
+    if (!listing) return [];
+    return [
+      {
+        icon: Calendar,
+        label: 'An fabricație',
+        value: listing.registrationYear ? String(listing.registrationYear) : null,
+      },
+      {
+        icon: Gauge,
+        label: 'Kilometraj',
+        value: formatMileage(listing.mileageKm),
+      },
+      {
+        icon: Fuel,
+        label: 'Combustibil',
+        value: listing.fuelType ?? null,
+      },
+      {
+        icon: Settings,
+        label: 'Cutie viteze',
+        value: listing.gearbox ?? null,
+      },
+      {
+        icon: Gauge,
+        label: 'Motor',
+        value: formatEngine(listing.engineCapacityCc, listing.enginePowerHp),
+      },
+      {
+        icon: Palette,
+        label: 'Culoare',
+        value: listing.color ?? null,
+      },
+    ].filter((stat) => Boolean(stat.value));
+  }, [listing]);
+
+  if (isLoading && !listing) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -150,46 +194,7 @@ const CarDetail = () => {
     );
   }
 
-  const images = listing.images?.length ? listing.images : [{ url: FALLBACK_IMAGE, isPrimary: true }];
-  const groupedDetails = groupDetails(listing.details);
-  const featureTabs = featureGroupsToTabs(listing.featureGroups);
   const price = priceFormatter.format(listing.price.value);
-
-  const quickStats = [
-    {
-      icon: Calendar,
-      label: 'An fabricație',
-      value: listing.registrationYear ?? '—',
-    },
-    {
-      icon: Gauge,
-      label: 'Kilometraj',
-      value: formatMileage(listing.mileageKm) ?? '—',
-    },
-    {
-      icon: Fuel,
-      label: 'Combustibil',
-      value: listing.fuelType ?? '—',
-    },
-    {
-      icon: Settings,
-      label: 'Cutie viteze',
-      value: listing.gearbox ?? '—',
-    },
-    {
-      icon: Gauge,
-      label: 'Motor',
-      value: formatEngine(listing.engineCapacityCc, listing.enginePowerHp) ?? '—',
-    },
-    {
-      icon: Palette,
-      label: 'Culoare',
-      value: listing.color ?? '—',
-    },
-  ];
-
-  const visibleQuickStats = quickStats.filter((stat) => stat.value && stat.value !== '—');
-
   const basicInfoGroup = groupedDetails.find((group) => group.key === 'basic_information');
   const technicalGroup = groupedDetails.find((group) => group.key === 'technical_specs');
 
@@ -277,7 +282,7 @@ const CarDetail = () => {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  {visibleQuickStats.map((stat) => (
+                  {quickStats.map((stat) => (
                     <div key={stat.label} className="rounded-xl border border-border p-4">
                       <stat.icon className="mb-2 h-5 w-5 text-accent" />
                       <p className="text-sm text-muted-foreground">{stat.label}</p>
@@ -301,12 +306,33 @@ const CarDetail = () => {
                   </div>
                 ) : null}
 
-                {listing.description && (
-                  <div>
-                    <h3 className="mb-3 text-lg font-semibold text-foreground">Descriere</h3>
-                    <p className="whitespace-pre-line text-muted-foreground leading-relaxed">{listing.description}</p>
-                  </div>
-                )}
+                <div>
+                  <h3 className="mb-3 text-lg font-semibold text-foreground">Descriere</h3>
+                  {descriptionBlocks.length ? (
+                    <div className="space-y-3 text-muted-foreground">
+                      {descriptionBlocks.map((block, index) => {
+                        if (block.type === 'list') {
+                          return (
+                            <ul key={`list-${index}`} className="list-disc space-y-1 pl-5 text-left">
+                              {block.items.map((item, idx) => (
+                                <li key={idx} className="leading-relaxed">
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          );
+                        }
+                        return (
+                          <p key={`paragraph-${index}`} className="leading-relaxed">
+                            {block.content}
+                          </p>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground">Descriere indisponibilă pentru acest vehicul.</p>
+                  )}
+                </div>
               </CardContent>
             </Card>
 

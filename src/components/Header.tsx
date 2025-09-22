@@ -16,7 +16,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-gradient-automotive/95 shadow-automotive sticky top-0 z-50 backdrop-blur-md">
+    <header className="bg-gradient-automotive shadow-automotive sticky top-0 z-50 backdrop-blur-md">
       <div className="container mx-auto px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between gap-3">
           <Link to="/" className="flex items-center space-x-3 group">
@@ -37,7 +37,7 @@ const Header = () => {
                 className={`px-4 py-2 rounded-lg font-medium transition-smooth hover:bg-primary-foreground/10 ${
                   location.pathname === item.path
                     ? 'bg-accent text-accent-foreground shadow-glow'
-                    : 'text-primary-foreground hover:text-accent'
+                    : 'text-primary-foreground/90 hover:text-primary-foreground'
                 }`}
               >
                 {item.name}
