@@ -52,7 +52,8 @@ const FeaturedCarsCarousel = () => {
           <img
             src={car.mainImage ?? FALLBACK_IMAGE}
             alt={car.title}
-            className="h-48 w-full cursor-pointer object-cover transition-smooth group-hover:scale-105"
+            loading="lazy"
+            className="h-48 w-full cursor-pointer object-cover transition-smooth group-hover:scale-105 sm:h-56"
           />
         </Link>
         <div className="absolute right-4 top-4 flex gap-2">
@@ -91,8 +92,8 @@ const FeaturedCarsCarousel = () => {
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-4">
           <div className="pr-4">
-            <h3 className="text-lg font-semibold text-foreground">{car.title}</h3>
-            <p className="text-sm text-muted-foreground">{car.location ?? 'Disponibil imediat'}</p>
+            <h3 className="line-clamp-2 text-left text-base font-semibold text-foreground sm:text-lg">{car.title}</h3>
+            <p className="mt-1 text-sm text-muted-foreground">{car.location ?? 'Disponibil imediat'}</p>
           </div>
           <div className="text-right">
             <p className="text-2xl font-bold text-accent">{priceFormatter.format(car.priceValue)}</p>

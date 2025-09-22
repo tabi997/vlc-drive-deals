@@ -188,6 +188,8 @@ const CarDetail = () => {
     },
   ];
 
+  const visibleQuickStats = quickStats.filter((stat) => stat.value && stat.value !== '—');
+
   const basicInfoGroup = groupedDetails.find((group) => group.key === 'basic_information');
   const technicalGroup = groupedDetails.find((group) => group.key === 'technical_specs');
 
@@ -222,7 +224,8 @@ const CarDetail = () => {
                 <img
                   src={images[currentImageIndex]?.url ?? FALLBACK_IMAGE}
                   alt={listing.title}
-                  className="h-96 w-full object-cover"
+                  loading="lazy"
+                  className="h-72 w-full object-cover sm:h-80 md:h-96"
                 />
                 <div className="absolute right-4 top-4 flex gap-2">
                   <Button
@@ -255,7 +258,12 @@ const CarDetail = () => {
                           currentImageIndex === index ? 'border-accent' : 'border-transparent'
                         }`}
                       >
-                        <img src={image.url} alt={`${listing.title} ${index + 1}`} className="h-16 w-20 object-cover" />
+                        <img
+                          src={image.url}
+                          alt={`${listing.title} ${index + 1}`}
+                          loading="lazy"
+                          className="h-16 w-20 object-cover"
+                        />
                       </button>
                     ))}
                   </div>
@@ -269,7 +277,7 @@ const CarDetail = () => {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  {quickStats.map((stat) => (
+                  {visibleQuickStats.map((stat) => (
                     <div key={stat.label} className="rounded-xl border border-border p-4">
                       <stat.icon className="mb-2 h-5 w-5 text-accent" />
                       <p className="text-sm text-muted-foreground">{stat.label}</p>

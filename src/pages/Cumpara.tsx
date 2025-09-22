@@ -45,28 +45,29 @@ const Cumpara = () => {
   const renderCard = (listing: ListingSummary) => {
     const badge = getPrimaryBadge(listing);
     return (
-      <Card key={listing.id} className="group overflow-hidden transition-smooth hover:shadow-card-custom">
-        <div className="relative">
-          <Link to={`/car/${listing.id}`} className="block">
-            <img
-              src={listing.mainImage ?? FALLBACK_IMAGE}
-              alt={listing.title}
-              className="h-48 w-full object-cover transition-smooth group-hover:scale-105"
-            />
-          </Link>
-          {badge && (
-            <Badge className="absolute left-4 top-4 bg-accent text-accent-foreground">
-              {badge}
+            <Card key={listing.id} className="group overflow-hidden transition-smooth hover:shadow-card-custom">
+              <div className="relative">
+                <Link to={`/car/${listing.id}`} className="block">
+                  <img
+                    src={listing.mainImage ?? FALLBACK_IMAGE}
+                    alt={listing.title}
+                    loading="lazy"
+                    className="h-48 w-full object-cover transition-smooth group-hover:scale-105 sm:h-56"
+                  />
+                </Link>
+                {badge && (
+                  <Badge className="absolute left-4 top-4 bg-accent text-accent-foreground">
+                    {badge}
             </Badge>
           )}
         </div>
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h3 className="text-xl font-semibold text-foreground">
+              <h3 className="line-clamp-2 text-left text-lg font-semibold text-foreground sm:text-xl">
                 {listing.title}
               </h3>
-              <p className="flex items-center gap-1 text-sm text-muted-foreground">
+              <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4" />
                 {listing.location ?? 'Disponibil în stoc' }
               </p>
@@ -131,6 +132,7 @@ const Cumpara = () => {
           <Button
             variant={activeFuel === 'all' ? 'default' : 'outline'}
             onClick={() => setActiveFuel('all')}
+            className="w-full sm:w-auto"
           >
             Toate combustibilele
           </Button>
@@ -139,6 +141,7 @@ const Cumpara = () => {
               key={fuel}
               variant={activeFuel === fuel ? 'default' : 'outline'}
               onClick={() => setActiveFuel(fuel)}
+              className="w-full sm:w-auto"
             >
               {fuel}
             </Button>
