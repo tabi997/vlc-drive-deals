@@ -296,11 +296,12 @@ const Vinde = () => {
             Preferi să Vorbești Direct?
           </h2>
           <p className="text-primary-foreground/80 mb-6">
-            Sună-ne pentru o evaluare rapidă prin telefon
+            Sună-ne pentru o evaluare rapidă la 0754 898 352
           </p>
-          <Button variant="secondary" size="lg" className="shadow-glow">
-            <Phone className="w-4 h-4 mr-2" />
-            0721 123 VLC
+          <Button variant="secondary" size="lg" className="shadow-glow" asChild>
+            <a href="tel:+40754898352">
+              <Phone className="mr-2 h-4 w-4" /> 0754 898 352
+            </a>
           </Button>
         </div>
       </main>

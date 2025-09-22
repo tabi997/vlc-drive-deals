@@ -33,6 +33,9 @@ const priceFormatter = new Intl.NumberFormat('ro-RO', {
 const numberFormatter = new Intl.NumberFormat('ro-RO');
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1549921296-3c48d285d0c5?auto=format&fit=crop&w=1200&q=80';
+const PRIMARY_PHONE_DISPLAY = '0754 898 352';
+const PRIMARY_PHONE_URI = '+40754898352';
+const PRIMARY_WHATSAPP_URL = 'https://wa.me/40754898352';
 
 const DETAIL_GROUP_LABELS: Record<string, string> = {
   basic_information: 'Informații de bază',
@@ -411,19 +414,17 @@ const CarDetail = () => {
 
                 <Separator />
 
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">Locație</p>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-accent" />
-                    <span className="text-sm text-foreground">
-                      {listing.seller?.location?.shortAddress ?? listing.seller?.city ?? 'Disponibil la dealer'}
-                    </span>
+                {listing.seller?.location?.shortAddress && (
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Locație</p>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-accent" />
+                      <span className="text-sm text-foreground">
+                        {listing.seller.location.shortAddress}
+                      </span>
+                    </div>
                   </div>
-                </div>
-
-                <Button size="lg" className="w-full">
-                  Programează o vizionare
-                </Button>
+                )}
               </CardContent>
             </Card>
 
@@ -443,15 +444,19 @@ const CarDetail = () => {
                   </div>
 
                   <div className="space-y-3">
-                    {listing.seller.phoneNumbers?.length ? (
-                      <Button className="w-full" size="lg" asChild>
-                        <a href={`tel:${listing.seller.phoneNumbers[0]}`}>
-                          <Phone className="mr-2 h-4 w-4" /> Sună acum
-                        </a>
-                      </Button>
-                    ) : null}
-                    <Button variant="outline" className="w-full" size="lg">
-                      <MessageCircle className="mr-2 h-4 w-4" /> Trimite mesaj
+                    <Button className="w-full" size="lg" asChild>
+                      <a href={`tel:${PRIMARY_PHONE_URI}`}>
+                        <Phone className="mr-2 h-4 w-4" /> Sună {PRIMARY_PHONE_DISPLAY}
+                      </a>
+                    </Button>
+                    <Button variant="outline" className="w-full" size="lg" asChild>
+                      <a
+                        href={`${PRIMARY_WHATSAPP_URL}?text=${encodeURIComponent('Bună ziua! Aș dori mai multe informații despre mașina listată pe VLC Car Deals.')}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <MessageCircle className="mr-2 h-4 w-4" /> Trimite mesaj WhatsApp
+                      </a>
                     </Button>
                     {listing.seller.email ? (
                       <Button variant="outline" className="w-full" size="lg" asChild>
