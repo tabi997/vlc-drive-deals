@@ -16,6 +16,7 @@ import {
   useAdminListings,
   useSaveListing,
   useUpdateListingStatus,
+  useDeleteListing,
   type AdminListingRecord,
   type ListingMutationPayload,
 } from '@/hooks/useAdminListings';
@@ -41,6 +42,7 @@ const AdminPage = () => {
   const { data: listings = [], isLoading, refetch } = useAdminListings(isAuthenticated);
   const saveListing = useSaveListing();
   const updateStatus = useUpdateListingStatus();
+  const deleteListing = useDeleteListing();
 
   useEffect(() => {
     if (!supabase) return;
@@ -303,6 +305,25 @@ const AdminPage = () => {
                         disabled={updateStatus.isPending}
                       >
                         {listing.status === 'ACTIVE' ? 'Arhivează' : 'Activează'}
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={async () => {
+                          const confirmed = window.confirm(`Sigur dorești să ștergi anunțul „${listing.title}”?`);
+                          if (!confirmed) return;
+                          try {
+                            await deleteListing.mutateAsync({ id: listing.id });
+                            if (editingListing?.id === listing.id) {
+                              setEditingListing(null);
+                              setActiveTab('manual');
+                            }
+                          } catch (error: any) {
+                            alert(error?.message ?? 'Ștergerea anunțului a eșuat');
+                          }
+                        }}
+                        disabled={deleteListing.isPending && deleteListing.variables?.id === listing.id}
+                      >
+                        Șterge
                       </Button>
                     </div>
                   </div>

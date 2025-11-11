@@ -255,6 +255,47 @@ export const useUpdateListingStatus = () => {
   });
 };
 
+export const useDeleteListing = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      if (!hasSupabaseClient || !supabase) {
+        throw new Error('Supabase nu este configurat');
+      }
+
+      const { error: functionError } = await supabase.functions.invoke('delete-listing', {
+        body: { id },
+      });
+
+      if (functionError) {
+        throw new Error(functionError.message ?? 'Ștergerea anunțului a eșuat');
+      }
+    },
+    onMutate: async ({ id }) => {
+      await queryClient.cancelQueries({ queryKey: ['admin-listings'] });
+      const previousData =
+        queryClient.getQueryData<AdminListingRecord[]>(['admin-listings']) ?? [];
+
+      queryClient.setQueryData<AdminListingRecord[]>(
+        ['admin-listings'],
+        previousData.filter((item) => item.id !== id)
+      );
+
+      return { previousData };
+    },
+    onError: (_error, _variables, context) => {
+      const snapshot = context as { previousData?: AdminListingRecord[] } | undefined;
+      if (snapshot?.previousData) {
+        queryClient.setQueryData(['admin-listings'], snapshot.previousData);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-listings'] });
+    },
+  });
+};
+
 interface ImportAutovitParams {
   url: string;
   status?: string;
