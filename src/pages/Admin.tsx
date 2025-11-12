@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { useQueryClient } from '@tanstack/react-query';
 import { LogOut, RefreshCw } from 'lucide-react';
+import { toast } from 'sonner';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +10,16 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { ListingForm } from '@/components/admin/ListingForm';
 import ManualListingForm from '@/components/admin/ManualListingForm';
 import AutovitImportForm from '@/components/admin/AutovitImportForm';
@@ -36,6 +47,8 @@ const AdminPage = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [editingListing, setEditingListing] = useState<AdminListingRecord | null>(null);
   const [activeTab, setActiveTab] = useState<'import' | 'manual' | 'edit'>('import');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [listingToDelete, setListingToDelete] = useState<AdminListingRecord | null>(null);
 
   const queryClient = useQueryClient();
   const isAuthenticated = Boolean(session);
@@ -90,8 +103,9 @@ const AdminPage = () => {
       const updatedListing = result.data?.find((item) => item.id === id) ?? null;
       setEditingListing(updatedListing);
       setActiveTab(updatedListing ? 'edit' : 'manual');
-    } catch (error: any) {
-      alert(error.message ?? 'Salvarea anunțului a eșuat');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Salvarea anunțului a eșuat';
+      toast.error(message);
     }
   };
 
@@ -308,18 +322,9 @@ const AdminPage = () => {
                       </Button>
                       <Button
                         variant="destructive"
-                        onClick={async () => {
-                          const confirmed = window.confirm(`Sigur dorești să ștergi anunțul „${listing.title}”?`);
-                          if (!confirmed) return;
-                          try {
-                            await deleteListing.mutateAsync({ id: listing.id });
-                            if (editingListing?.id === listing.id) {
-                              setEditingListing(null);
-                              setActiveTab('manual');
-                            }
-                          } catch (error: any) {
-                            alert(error?.message ?? 'Ștergerea anunțului a eșuat');
-                          }
+                        onClick={() => {
+                          setListingToDelete(listing);
+                          setDeleteDialogOpen(true);
                         }}
                         disabled={deleteListing.isPending && deleteListing.variables?.id === listing.id}
                       >
@@ -369,6 +374,40 @@ const AdminPage = () => {
           </Card>
         </div>
       </main>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmă ștergerea</AlertDialogTitle>
+            <AlertDialogDescription>
+              Sigur dorești să ștergi anunțul „{listingToDelete?.title}”? Această acțiune nu poate fi anulată.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anulează</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                if (!listingToDelete) return;
+                try {
+                  await deleteListing.mutateAsync({ id: listingToDelete.id });
+                  if (editingListing?.id === listingToDelete.id) {
+                    setEditingListing(null);
+                    setActiveTab('manual');
+                  }
+                  setDeleteDialogOpen(false);
+                  setListingToDelete(null);
+                } catch (error) {
+                  const message = error instanceof Error ? error.message : 'Ștergerea anunțului a eșuat';
+                  toast.error(message);
+                }
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Șterge
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

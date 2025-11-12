@@ -33,7 +33,6 @@ const MasiniLaComanda = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast.success('Cererea ta a fost trimisă cu succes! Te vom contacta în cel mai scurt timp.');
-    console.log('Form submitted:', formData);
   };
 
   const handleFeatureChange = (feature: string, checked: boolean) => {

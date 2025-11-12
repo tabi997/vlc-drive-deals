@@ -23,8 +23,8 @@ export const useListing = ({ id, autovitId }: UseListingParams) =>
             const listing = await fetchListingByAutovitId(autovitId);
             if (listing) return listing;
           }
-        } catch (error) {
-          console.error('Listing fetch failed, falling back to sample', error);
+        } catch {
+          // Fallback to sample data on error
         }
         return sampleListingPayload;
       },

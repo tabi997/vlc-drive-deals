@@ -244,7 +244,6 @@ export const fetchListings = async (): Promise<ListingSummary[]> => {
     .limit(60);
 
   if (error) {
-    console.error('Failed to load listings', error);
     throw error;
   }
 
@@ -263,7 +262,6 @@ export const fetchListingById = async (id: string): Promise<ListingPayload | nul
     .maybeSingle();
 
   if (error) {
-    console.error('Failed to fetch listing', error);
     throw error;
   }
 
@@ -284,7 +282,6 @@ export const fetchListingByAutovitId = async (autovitId: string): Promise<Listin
     .maybeSingle();
 
   if (error) {
-    console.error('Failed to fetch by autovit id', error);
     throw error;
   }
 

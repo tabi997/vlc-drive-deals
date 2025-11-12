@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+import { APP_CONFIG } from '@/lib/config';
 
 const Vinde = () => {
   const [formData, setFormData] = useState({
@@ -28,9 +29,7 @@ const Vinde = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Force HMR refresh to clear any cached references
     toast.success('Solicitarea de evaluare a fost trimisă! Te vom contacta în cel mai scurt timp pentru a programa o vizualizare.');
-    console.log('Sell form submitted:', formData);
   };
 
   const benefits = [
@@ -296,11 +295,11 @@ const Vinde = () => {
             Preferi să Vorbești Direct?
           </h2>
           <p className="text-primary-foreground/80 mb-6">
-            Sună-ne pentru o evaluare rapidă la 0754 898 352
+            Sună-ne pentru o evaluare rapidă la {APP_CONFIG.contact.phone.display}
           </p>
           <Button variant="secondary" size="lg" className="shadow-glow" asChild>
-            <a href="tel:+40754898352">
-              <Phone className="mr-2 h-4 w-4" /> 0754 898 352
+            <a href={`tel:${APP_CONFIG.contact.phone.uri}`}>
+              <Phone className="mr-2 h-4 w-4" /> {APP_CONFIG.contact.phone.display}
             </a>
           </Button>
         </div>

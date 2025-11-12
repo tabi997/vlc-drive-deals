@@ -1,12 +1,26 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.46.1";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+const getCorsHeaders = (origin: string | null) => {
+  const allowedOrigins = [
+    Deno.env.get("ALLOWED_ORIGIN"),
+    "http://localhost:4173",
+    "http://localhost:5173",
+  ].filter(Boolean) as string[];
+
+  const originHeader = origin && allowedOrigins.includes(origin) ? origin : allowedOrigins[0] || "*";
+
+  return {
+    "Access-Control-Allow-Origin": originHeader,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+  };
 };
 
 serve(async (req) => {
+  const origin = req.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -27,12 +41,19 @@ serve(async (req) => {
       });
     }
 
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      return new Response(JSON.stringify({ error: "ID-ul anunțului nu este valid" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceRoleKey =
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SERVICE_ROLE_KEY");
 
     if (!supabaseUrl || !serviceRoleKey) {
-      console.error("Delete listing function missing credentials");
       return new Response(JSON.stringify({ error: "Supabase environment not configured" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -70,7 +91,6 @@ serve(async (req) => {
       .maybeSingle();
 
     if (adminError) {
-      console.error("Failed to fetch admin role", adminError);
       return new Response(JSON.stringify({ error: "Nu am putut verifica rolul utilizatorului" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -87,7 +107,6 @@ serve(async (req) => {
     const { error: deleteError } = await supabaseAdmin.from("autovit_listings").delete().eq("id", id);
 
     if (deleteError) {
-      console.error("Failed to delete listing", deleteError);
       return new Response(JSON.stringify({ error: "Ștergerea anunțului a eșuat" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -99,8 +118,8 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ error: "Ștergerea anunțului a eșuat" }), {
+    const message = error instanceof Error ? error.message : "Ștergerea anunțului a eșuat";
+    return new Response(JSON.stringify({ error: message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

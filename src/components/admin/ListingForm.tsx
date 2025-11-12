@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -154,14 +155,14 @@ export const ListingForm = ({ listing, onSubmit, onCancel, isSubmitting }: Listi
 
   const submitForm = handleSubmit((values) => {
     if (!values.autovitId.trim()) {
-      alert('Autovit ID este obligatoriu.');
+      toast.error('Autovit ID este obligatoriu.');
       return;
     }
 
     const priceValue = Number(values.priceValue);
 
-    if (Number.isNaN(priceValue)) {
-      alert('Prețul nu este valid.');
+    if (Number.isNaN(priceValue) || priceValue < 0) {
+      toast.error('Prețul nu este valid.');
       return;
     }
 

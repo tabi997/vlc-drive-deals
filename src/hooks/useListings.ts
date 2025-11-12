@@ -16,8 +16,7 @@ export const useListings = () =>
             return FALLBACK_DATA;
           }
           return listings;
-        } catch (error) {
-          console.error('Falling back to sample listings due to error', error);
+        } catch {
           return FALLBACK_DATA;
         }
       },

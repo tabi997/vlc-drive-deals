@@ -90,11 +90,14 @@ const normaliseRecord = (row: Record<string, any>): AdminListingRecord => ({
   badges: row.badges ?? undefined,
   highlightTags: row.highlight_tags ?? undefined,
   images: Array.isArray(row.images)
-    ? row.images.map((image: any, index: number) => ({
-        url: String(typeof image === 'string' ? image : image?.url ?? ''),
-        isPrimary: index === 0,
-        caption: image?.caption ?? null,
-      }))
+    ? row.images.map((image: unknown, index: number) => {
+        const imageObj = typeof image === 'string' ? { url: image } : (image as { url?: string; caption?: string | null } | null);
+        return {
+          url: String(imageObj?.url ?? ''),
+          isPrimary: index === 0,
+          caption: imageObj?.caption ?? null,
+        };
+      })
     : [],
   description: row.description ?? null,
   details: row.details ?? undefined,

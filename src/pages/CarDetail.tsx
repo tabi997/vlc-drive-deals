@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
   Heart,
   Share2,
   Calendar,
@@ -20,8 +22,19 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from '@/components/ui/carousel';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useListing } from '@/hooks/useListing';
 import { parseDescription } from '@/lib/description';
+import { APP_CONFIG } from '@/lib/config';
 import type { ListingDetail, ListingFeatureGroup } from '@/types/listing';
 
 const priceFormatter = new Intl.NumberFormat('ro-RO', {
@@ -33,9 +46,6 @@ const priceFormatter = new Intl.NumberFormat('ro-RO', {
 const numberFormatter = new Intl.NumberFormat('ro-RO');
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1549921296-3c48d285d0c5?auto=format&fit=crop&w=1200&q=80';
-const PRIMARY_PHONE_DISPLAY = '0754 898 352';
-const PRIMARY_PHONE_URI = '+40754898352';
-const PRIMARY_WHATSAPP_URL = 'https://wa.me/40754898352';
 
 const DETAIL_GROUP_LABELS: Record<string, string> = {
   basic_information: 'Informații de bază',
@@ -108,6 +118,9 @@ const CarDetail = () => {
   const [searchParams] = useSearchParams();
   const { data: listing, isLoading } = useListing({ id });
   const [isFavorite, setIsFavorite] = useState(false);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -157,6 +170,44 @@ const CarDetail = () => {
       },
     ].filter((stat) => Boolean(stat.value));
   }, [listing]);
+
+  const hasMultipleImages = images.length > 1;
+
+  useEffect(() => {
+    if (!carouselApi) return;
+    const handleSelect = () => setActiveSlide(carouselApi.selectedScrollSnap());
+    handleSelect();
+    carouselApi.on('select', handleSelect);
+    carouselApi.on('reInit', handleSelect);
+    return () => {
+      carouselApi.off('select', handleSelect);
+      carouselApi.off('reInit', handleSelect);
+    };
+  }, [carouselApi]);
+
+  useEffect(() => {
+    if (!listing?.id) return;
+    setActiveSlide(0);
+    setIsLightboxOpen(false);
+    carouselApi?.scrollTo(0, true);
+  }, [listing?.id, carouselApi]);
+
+  const handleOpenImage = (index: number) => {
+    carouselApi?.scrollTo(index, true);
+    setActiveSlide(index);
+    setIsLightboxOpen(true);
+  };
+
+  const handleLightboxNavigate = (direction: 'prev' | 'next') => {
+    if (!images.length) return;
+    setActiveSlide((prev) => {
+      const nextIndex = direction === 'next' ? (prev + 1) % images.length : (prev - 1 + images.length) % images.length;
+      carouselApi?.scrollTo(nextIndex, true);
+      return nextIndex;
+    });
+  };
+
+  const activeImage = images[activeSlide] ?? images[0];
 
   if (isLoading && !listing) {
     return (
@@ -226,19 +277,57 @@ const CarDetail = () => {
           <div className="lg:col-span-2 space-y-6">
             <Card className="overflow-hidden">
               <div className="relative">
-                <div className="w-full overflow-hidden">
-                  <div className="relative flex snap-x snap-mandatory overflow-x-auto scroll-smooth">
+                <Carousel
+                  setApi={setCarouselApi}
+                  opts={{ align: 'start', loop: hasMultipleImages }}
+                  className="w-full"
+                >
+                  <CarouselContent className="ml-0">
                     {images.map((image, index) => (
-                      <img
-                        key={image.url}
-                        src={image.url}
-                        alt={`${listing.title} ${index + 1}`}
-                        loading="lazy"
-                        className="h-72 w-full flex-shrink-0 snap-center object-cover sm:h-80 md:h-96"
+                      <CarouselItem key={image.url} className="pl-0">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenImage(index)}
+                          aria-label={`Deschide imaginea ${index + 1}`}
+                          className="block w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background md:cursor-zoom-in"
+                        >
+                          <AspectRatio ratio={16 / 9} className="relative overflow-hidden bg-muted md:rounded-lg">
+                            <img
+                              src={image.url}
+                              alt={`${listing.title} ${index + 1}`}
+                              loading="lazy"
+                              className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 hover:scale-[1.02]"
+                            />
+                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-black/5" />
+                          </AspectRatio>
+                        </button>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  {hasMultipleImages ? (
+                    <>
+                      <CarouselPrevious className="hidden md:flex -left-4 top-1/2 -translate-y-1/2 border-none bg-card/80 text-foreground shadow-lg backdrop-blur-sm hover:bg-card" />
+                      <CarouselNext className="hidden md:flex -right-4 top-1/2 -translate-y-1/2 border-none bg-card/80 text-foreground shadow-lg backdrop-blur-sm hover:bg-card" />
+                    </>
+                  ) : null}
+                </Carousel>
+                {hasMultipleImages ? (
+                  <div className="mt-3 flex justify-center gap-2 md:hidden">
+                    {images.map((_, index) => (
+                      <span
+                        key={`${listing.id}-dot-${index}`}
+                        className={`h-2 w-2 rounded-full transition ${
+                          index === activeSlide ? 'bg-accent' : 'bg-muted-foreground/40'
+                        }`}
                       />
                     ))}
                   </div>
-                </div>
+                ) : null}
+                {hasMultipleImages ? (
+                  <div className="pointer-events-none absolute bottom-4 left-1/2 hidden -translate-x-1/2 transform rounded-full bg-black/40 px-3 py-1 text-xs font-medium text-white md:flex">
+                    {activeSlide + 1} / {images.length}
+                  </div>
+                ) : null}
                 <div className="absolute right-4 top-4 flex gap-2">
                   <Button
                     size="sm"
@@ -252,11 +341,11 @@ const CarDetail = () => {
                     <Share2 className="h-4 w-4" />
                   </Button>
                 </div>
-                {listing.registrationYear && (
+                {listing.registrationYear ? (
                   <Badge className="absolute left-4 top-4 bg-accent text-accent-foreground">
                     {listing.registrationYear}
                   </Badge>
-                )}
+                ) : null}
               </div>
             </Card>
 
@@ -440,13 +529,13 @@ const CarDetail = () => {
 
                   <div className="space-y-3">
                     <Button className="w-full" size="lg" asChild>
-                      <a href={`tel:${PRIMARY_PHONE_URI}`}>
-                        <Phone className="mr-2 h-4 w-4" /> Sună {PRIMARY_PHONE_DISPLAY}
+                      <a href={`tel:${APP_CONFIG.contact.phone.uri}`}>
+                        <Phone className="mr-2 h-4 w-4" /> Sună {APP_CONFIG.contact.phone.display}
                       </a>
                     </Button>
                     <Button variant="outline" className="w-full" size="lg" asChild>
                       <a
-                        href={`${PRIMARY_WHATSAPP_URL}?text=${encodeURIComponent('Bună ziua! Aș dori mai multe informații despre mașina listată pe VLC Car Deals.')}`}
+                        href={`${APP_CONFIG.contact.phone.whatsapp}?text=${encodeURIComponent('Bună ziua! Aș dori mai multe informații despre mașina listată pe VLC Car Deals.')}`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -555,6 +644,44 @@ const CarDetail = () => {
           </div>
         </div>
       </main>
+      <Dialog open={isLightboxOpen} onOpenChange={setIsLightboxOpen}>
+        <DialogContent className="max-w-5xl border-none bg-transparent p-0 text-white shadow-none">
+          <div className="relative flex items-center justify-center bg-black/90">
+            {hasMultipleImages ? (
+              <>
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  onClick={() => handleLightboxNavigate('prev')}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 transform bg-white/15 text-white hover:bg-white/25"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                  <span className="sr-only">Imaginea anterioară</span>
+                </Button>
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  onClick={() => handleLightboxNavigate('next')}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 transform bg-white/15 text-white hover:bg-white/25"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                  <span className="sr-only">Imaginea următoare</span>
+                </Button>
+              </>
+            ) : null}
+            <img
+              src={activeImage?.url}
+              alt={`${listing.title} - imagine ${activeSlide + 1}`}
+              className="max-h-[85vh] w-full object-contain bg-black"
+            />
+          </div>
+          {hasMultipleImages ? (
+            <div className="bg-black/75 px-6 py-4 text-center text-sm text-white">
+              {activeSlide + 1} / {images.length}
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

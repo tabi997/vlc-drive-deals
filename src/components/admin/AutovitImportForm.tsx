@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useImportAutovitListing } from '@/hooks/useAdminListings';
+import { isValidAutovitUrl } from '@/lib/security';
 
 interface AutovitImportFormProps {
   onImported?: (autovitId: string | null) => void;
@@ -17,17 +18,24 @@ const AutovitImportForm = ({ onImported }: AutovitImportFormProps) => {
     event.preventDefault();
     setErrorMessage(null);
 
-    if (!url.trim()) {
+    const trimmedUrl = url.trim();
+    if (!trimmedUrl) {
       setErrorMessage('Introdu link-ul complet al anunțului din Autovit.');
       return;
     }
 
+    if (!isValidAutovitUrl(trimmedUrl)) {
+      setErrorMessage('URL-ul trebuie să fie de pe domeniul autovit.ro');
+      return;
+    }
+
     try {
-      const result = await importListing.mutateAsync({ url: url.trim(), status });
+      const result = await importListing.mutateAsync({ url: trimmedUrl, status });
       setUrl('');
       onImported?.(result?.autovit_id ?? null);
-    } catch (error: any) {
-      setErrorMessage(error.message ?? 'Importul a eșuat. Verifică link-ul și încearcă din nou.');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Importul a eșuat. Verifică link-ul și încearcă din nou.';
+      setErrorMessage(message);
     }
   };
 

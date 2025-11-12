@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -99,13 +100,13 @@ const ManualListingForm = ({ listing, onSubmit, onCancel, isSubmitting }: Manual
 
   const submitForm = handleSubmit((values) => {
     if (!values.title.trim()) {
-      alert('Titlul este obligatoriu.');
+      toast.error('Titlul este obligatoriu.');
       return;
     }
 
     const priceValue = Number(values.priceValue);
-    if (Number.isNaN(priceValue)) {
-      alert('Prețul trebuie să fie un număr.');
+    if (Number.isNaN(priceValue) || priceValue < 0) {
+      toast.error('Prețul trebuie să fie un număr pozitiv.');
       return;
     }
 
